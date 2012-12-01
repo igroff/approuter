@@ -1,0 +1,4 @@
+build_output/
+tmp/
+*.pyc
+*.swp
