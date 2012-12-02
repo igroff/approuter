@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+export PRE_APPROUTER_PATH=$PATH
+export PATH=`pwd`/build_output/bin:$PATH
+
+function deactivate(){
+    export PATH=$PRE_APPROUTER_PATH
+}
+
+export -f deactivate
+
