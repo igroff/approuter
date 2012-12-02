@@ -12,6 +12,7 @@ else
     ROOT=${HERE}/build_output
     export PATH=${ROOT}/bin:$PATH
     export PATH=${ROOT}/usr/local/ssl/bin/:$PATH
+    export PATH=${ROOT}/sbin:$PATH
 
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
