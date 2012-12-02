@@ -17,7 +17,7 @@ LUA_CRYPTO= ${INSTALL_LOCATION}/lib/crypto.la
 PKG_CONFIG_PATH=${INSTALL_LOCATION}/lib/pkgconfig:${INSTALL_LOCATION}/usr/local/ssl/lib/pkgconfig
 .EXPORT_ALL_VARIABLES:
 
-${NGINX}: ${LUAJIT} ${OPEN_SSL} ${LUA_CRYPTO}
+${NGINX}: ${LUAJIT} ${OPEN_SSL}
 	cd ${BUILD_ROOT}/nginx-1.2.4/ && export LUAJIT_LIB=${LUAJIT_LIB} && ./configure --prefix=${INSTALL_LOCATION} --add-module=${BUILD_ROOT}/ngx_devel_kit-0.2.17rc2 --add-module=${BUILD_ROOT}/lua-nginx-module-0.7.6rc1 --with-pcre=${BUILD_ROOT}/pcre-8.32
 	cd ${BUILD_ROOT}/nginx-1.2.4/ && make install
 
@@ -38,12 +38,8 @@ ${LUA}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 
 ${OPEN_SSL}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 	# haven't gotten to the other platforms yet, so we'll let this blow out elsewhere
-	cd ${OPEN_SSL_SOURCE} && ./config --prefix=${INSTALL_LOCATION}
+	cd ${OPEN_SSL_SOURCE} && ./configure darwin64-x86_64-cc --prefix=${INSTALL_LOCATION}
 	cd ${OPEN_SSL_SOURCE} && make install 
-
-${LUA_CRYPTO}: ${OPEN_SSL} ${LUA}
-	cd ${BUILD_ROOT}/luacrypto-master && ./configure --prefix=${INSTALL_LOCATION}
-	cd ${BUILD_ROOT}/luacrypto-master && make install
 
 clean:
 	-rm -rf ${INSTALL_LOCATION}
