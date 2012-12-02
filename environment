@@ -1,10 +1,22 @@
 #! /usr/bin/env bash
-export PRE_APPROUTER_PATH=$PATH
-export PATH=`pwd`/build_output/bin:$PATH
 
-function deactivate(){
-    export PATH=$PRE_APPROUTER_PATH
-}
+# have we done this?, then we should not do it again
+if [ -n "$PRE_APPROUTER_PATH" ]; then
+    echo "looks like we're already set... ignoring your request"
+else
+    echo "setting your environment up for you...."
+    # capture how the path was before we started
+    export PRE_APPROUTER_PATH=$PATH
 
-export -f deactivate
+    HERE=`pwd`
+    ROOT=${HERE}/build_output
+    export PATH=${ROOT}/bin:$PATH
+    export PATH=${ROOT}/usr/local/ssl/bin/:$PATH
+
+    function deactivate(){
+        export PATH=$PRE_APPROUTER_PATH
+    }
+
+    export -f deactivate
+fi
 

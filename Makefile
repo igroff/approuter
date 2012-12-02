@@ -17,7 +17,7 @@ LUA_CRYPTO= ${INSTALL_LOCATION}/lib/crypto.la
 PKG_CONFIG_PATH=${INSTALL_LOCATION}/lib/pkgconfig:${INSTALL_LOCATION}/usr/local/ssl/lib/pkgconfig
 .EXPORT_ALL_VARIABLES:
 
-${NGINX}: ${LUAJIT} ${OPEN_SSL}
+${NGINX}: ${LUAJIT} ${OPEN_SSL} ${LUA_CRYPTO}
 	cd ${BUILD_ROOT}/nginx-1.2.4/ && export LUAJIT_LIB=${LUAJIT_LIB} && ./configure --prefix=${INSTALL_LOCATION} --add-module=${BUILD_ROOT}/ngx_devel_kit-0.2.17rc2 --add-module=${BUILD_ROOT}/lua-nginx-module-0.7.6rc1 --with-pcre=${BUILD_ROOT}/pcre-8.32
 	cd ${BUILD_ROOT}/nginx-1.2.4/ && make install
 
