@@ -15,6 +15,7 @@ else
 
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
+        unset PRE_APPROUTER_PATH
     }
 
     export -f deactivate
