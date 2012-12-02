@@ -38,8 +38,8 @@ ${LUA}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 
 ${OPEN_SSL}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 	# haven't gotten to the other platforms yet, so we'll let this blow out elsewhere
-	cd ${OPEN_SSL_SOURCE} && ./configure darwin64-x86_64-cc
-	cd ${OPEN_SSL_SOURCE} && make install -e INSTALL_PREFIX=${INSTALL_LOCATION} -e OPENSSL_DIR=${INSTALL_LOCATION}/ssl
+	cd ${OPEN_SSL_SOURCE} && ./config --prefix=${INSTALL_LOCATION}
+	cd ${OPEN_SSL_SOURCE} && make install 
 
 ${LUA_CRYPTO}: ${OPEN_SSL} ${LUA}
 	cd ${BUILD_ROOT}/luacrypto-master && ./configure --prefix=${INSTALL_LOCATION}
