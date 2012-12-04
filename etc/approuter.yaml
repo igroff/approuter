@@ -1,0 +1,14 @@
+app: super test app
+port: 9090
+ssl_port: 4443
+route_cookie_name_base: approute
+repo: git@github.glgroup.com:CoreProductDelivery/token-service.git
+production:
+    route_cookie_value: production
+    branch: deploy
+    start: make start -e PORT={{PORT}}
+alternate:
+    -
+        route_cookie_value: alternate1
+        branch: deployqa
+        start: make debug -e PORT={{PORT}}
