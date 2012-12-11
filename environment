@@ -17,6 +17,7 @@ else
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
         unset PRE_APPROUTER_PATH
+        echo "I've removed the environment changes for you"
     }
 
     export -f deactivate
