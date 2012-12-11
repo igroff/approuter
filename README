@@ -1,0 +1,25 @@
+This thing is designed to manage multiple versions of an application 
+running simultaneously.  It will manage two types of running applications:
+production and alternate.  
+
+production - the 'in production' version of the application, this version
+    will be managed as if it's presence were important and upgrades 
+    to the underlying code (changes detected in the repo) will cause
+    a graceful switch where the users should notice no downtime.
+
+alternate - new 'in test' versions of the application.  Changes from the source
+    repo for these applications are immediately applied with the existing version
+    being forcibly replaced with the new.  The assumption here is that this 
+    version is being worked on and you want your changes to be immediately
+    available.
+
+Other definitions
+
+instance - a named instance of an application for example, the the case
+    of having multiple alternate instances one might have alternate instances
+    a, b, and c.  Production type applications only have two instances
+    active and inactive.  
+
+Routing amongst the application instances is managed by cookie, with the 
+presence of the a type/instance cookie causing the request to be routed
+to the correct type/instance.
