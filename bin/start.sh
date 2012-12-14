@@ -1,10 +1,7 @@
 #! /usr/bin/env bash
 
-MANAGED_ROOT=`pwd`/managed
-ALTERNATE_ROOT=${MANAGED_ROOT}/alternates
-LOG_DIR=${MANAGED_ROOT}/var/log
-RUN_DIR=${MANAGED_ROOT}/var/run
-START_CMD_TEMPLATE=`cat ${MANAGED_ROOT}/starter.conf`
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/environment
 
 mkdir -p ${LOG_DIR}
 mkdir -p ${RUN_DIR}
@@ -38,12 +35,12 @@ setup_managed_repositories(){
     while read alternate 
     do
         echo "initializing alternate ${alternate}"
-        ALTERNATE_DIR=${ALTERNATE_ROOT}/${alternate}
+        ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
         clone_repo_as_needed ${ALTERNATE_DIR} `cat ./managed/repo.conf`
         spushd ${ALTERNATE_DIR}
         git checkout ${alternate}
         spopd
-    done < ./managed/alternates.conf
+    done < ${ALTERNATES_CONF}
 }
 
 start_instance(){
@@ -60,6 +57,13 @@ start_instance(){
 setup_managed_repositories;
 # start each of our application instances
 # prod ports will be 9001, 9002
-# alternates we'll start at 9050
 start_instance ${MANAGED_ROOT}/prod/instance1 9001
 start_instance ${MANAGED_ROOT}/prod/instance2 9002
+# alternates we'll start at 9050
+PORT=9049
+while read alternate
+do
+    PORT=`echo "${PORT}+1" | bc`
+    ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
+    start_instance ${ALTERNATE_DIR} $PORT
+done < ${ALTERNATES_CONF}

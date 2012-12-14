@@ -1,0 +1,6 @@
+MANAGED_ROOT=`pwd`/managed
+ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
+ALTERNATES_CONF=${MANAGED_ROOT}/alternates.conf
+LOG_DIR=${MANAGED_ROOT}/var/log
+RUN_DIR=${MANAGED_ROOT}/var/run
+START_CMD_TEMPLATE=`cat ${MANAGED_ROOT}/starter.conf`
