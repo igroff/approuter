@@ -8,4 +8,6 @@ do
         PIDS="${PIDS} `cat $pidfile`"
     fi
 done
-ps $PIDS
+if [ "${PIDS}x" != "x" ]; then
+    ps $PIDS
+fi
