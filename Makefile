@@ -1,5 +1,5 @@
 SHELL=/usr/bin/env bash
-.PHONY: clean base
+.PHONY: clean base remanaged
 
 BUILD_ROOT=$(CURDIR)/tmp
 PACKAGE_DIR=$(CURDIR)/packages
@@ -38,6 +38,13 @@ ${INSTALL_LOCATION}:
 ${BUILD_ROOT}:
 	mkdir -p ${BUILD_ROOT}
 	cd ${PACKAGE_DIR} && for file in *.tar.gz; do tar xf $${file} -C ${BUILD_ROOT}; done
+
+remanaged:
+	@-rm -rf ./managed/prod/instance1/*
+	@-rm -rf ./managed/prod/instance1/.??*
+	@-rm -rf ./managed/prod/instance2/*
+	@-rm -rf ./managed/prod/instance2/.??*
+	@-rm -rf ./managed/alternates/*
 
 clean:
 	-rm -rf ${INSTALL_LOCATION}

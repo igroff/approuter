@@ -34,3 +34,13 @@ managed/repo.con
     Stores the repo url (git) that refers the the coded managed by this instance of the
     approuter. This is the repository that contains the code that will be cloned into
     the production and alternate locations, and ultimately run.
+
+managed/alternates.conf
+    A list of branches that will be run as alternates.  It is expected that the branches
+    referenced already exist.
+
+managed/starter.conf
+    The command that will be used to start the application instances.  It is expected that
+    the command will contain a {{port}} value which will be replaced with the port that
+    the application is expected to start and listen on.  This port will be used to 
+    route inbound http traffic to the application instance.
