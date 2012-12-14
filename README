@@ -23,3 +23,13 @@ instance - a named instance of an application for example, the the case
 Routing amongst the application instances is managed by cookie, with the 
 presence of the a type/instance cookie causing the request to be routed
 to the correct type/instance.
+
+Filesystem Structure
+
+managed/ 
+    This directory is where all the managed repos (applications) and the configuration
+    data to manage them is stored.
+
+managed/config
+    The configuration file that stores information about the managed applciations needed
+    keep them running.
