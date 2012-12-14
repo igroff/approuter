@@ -30,6 +30,7 @@ managed/
     This directory is where all the managed repos (applications) and the configuration
     data to manage them is stored.
 
-managed/config
-    The configuration file that stores information about the managed applciations needed
-    keep them running.
+managed/repo.con
+    Stores the repo url (git) that refers the the coded managed by this instance of the
+    approuter. This is the repository that contains the code that will be cloned into
+    the production and alternate locations, and ultimately run.
