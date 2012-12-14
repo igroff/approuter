@@ -7,6 +7,7 @@ else
     echo "setting your environment up for you...."
     # capture how the path was before we started
     export PRE_APPROUTER_PATH=$PATH
+    export PRE_APPROUTER_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 
     HERE=`pwd`
     ROOT=${HERE}/build_output
@@ -16,6 +17,8 @@ else
 
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
+        export LD_LIBRARY_PATH=$PRE_APPROUTER_LD_LIBRARY_PATH
+        unset PRE_APPROUTER_LD_LIBRARY_PATH
         unset PRE_APPROUTER_PATH
         echo "I've removed the environment changes for you"
     }
