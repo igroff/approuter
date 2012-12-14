@@ -62,7 +62,7 @@ if [ $? -ne 0 ]; then
 fi
 
 if [ $ACTION == "expand" ]; then
-    printf "* * * * *\t$0\t$REPO_DIR"
+    printf "* * * * *\t$0 $REPO_DIR"
     exit 0
 fi
 

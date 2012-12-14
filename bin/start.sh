@@ -26,7 +26,7 @@ clone_repo_as_needed() {
         printf "repo found at $1, not cloning\n"
     fi
     # create our updater entry
-    ${DIR}/update_repo_as_needed expand $1 >> ${VAR_DIR}/crontab
+    echo "${DIR}/update_repo_as_needed expand $1 > 2>&1" >> ${VAR_DIR}/crontab
     echo "" >> ${VAR_DIR}/crontab
 }
 
@@ -35,15 +35,15 @@ setup_managed_repositories(){
     # make sure we on't have an old crontab
     rm -f ${VAR_DIR}/crontab
 
-    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ./managed/repo.conf`
-    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ./managed/repo.conf`
+    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ${MANAGED_ROOT}/repo.conf`
+    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ${MANAGED_ROOT}/repo.conf`
 
     # alternates
     while read alternate 
     do
         echo "initializing alternate ${alternate}"
         ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
-        clone_repo_as_needed ${ALTERNATE_DIR} `cat ./managed/repo.conf`
+        clone_repo_as_needed ${ALTERNATE_DIR} `cat ${MANAGED_ROOT}/repo.conf`
         spushd ${ALTERNATE_DIR}
         git checkout ${alternate}
         spopd
@@ -60,12 +60,15 @@ start_instance(){
     echo "starting: ${START_CMD}"
     ${START_CMD} > ${LOG_DIR}/${DIR_NAME}_$2.log 2>&1 & 
     echo $! > "${RUN_DIR}/$2.pid"
+    spopd
 }
 
 for pidfile in ${RUN_DIR}/*; 
 do
-    echo "looks like something may be running, fix that first"
-    exit 1
+    if [ -f $pidfile ]; then
+        echo "looks like something may be running, fix that first"
+        exit 1
+    fi
 done;
 
 setup_managed_repositories;
