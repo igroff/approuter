@@ -11,4 +11,4 @@ do
     fi
 done
 
-${DIR}/status.sh
+${DIR}/status

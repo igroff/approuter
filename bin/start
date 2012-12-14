@@ -85,4 +85,4 @@ do
     start_instance ${ALTERNATE_DIR} $PORT
 done < ${ALTERNATES_CONF}
 
-${DIR}/status.sh
+${DIR}/status
