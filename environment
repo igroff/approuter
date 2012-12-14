@@ -12,7 +12,7 @@ else
     HERE=`pwd`
     ROOT=${HERE}/build_output
     export LD_LIBRARY_PATH=${ROOT}/lib:$PRE_APPROUTER_LD_LIBRARY_PATH
-    export PATH=${ROOT}/bin:$PATH
+    export PATH=${HERE}/bin:${ROOT}/bin:$PATH
     export PATH=${ROOT}/usr/local/ssl/bin/:$PATH
     export PATH=${ROOT}/sbin:$PATH
 
