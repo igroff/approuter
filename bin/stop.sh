@@ -10,3 +10,5 @@ do
         fi
     fi
 done
+
+${DIR}/status.sh

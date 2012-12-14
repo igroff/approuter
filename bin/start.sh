@@ -25,9 +25,16 @@ clone_repo_as_needed() {
     else
         printf "repo found at $1, not cloning\n"
     fi
+    # create our updater entry
+    ${DIR}/update_repo_as_needed expand $1 >> ${VAR_DIR}/crontab
+    echo "" >> ${VAR_DIR}/crontab
 }
 
 setup_managed_repositories(){
+    # we're going to set up the managed repositories to be watched, so
+    # make sure we on't have an old crontab
+    rm -f ${VAR_DIR}/crontab
+
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ./managed/repo.conf`
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ./managed/repo.conf`
 
@@ -53,6 +60,7 @@ start_instance(){
     echo "starting: ${START_CMD}"
     ${START_CMD} > ${LOG_DIR}/${DIR_NAME}_$2.log 2>&1 & 
     echo $! > "${RUN_DIR}/$2.pid"
+
 }
 setup_managed_repositories;
 # start each of our application instances
@@ -67,3 +75,5 @@ do
     ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
     start_instance ${ALTERNATE_DIR} $PORT
 done < ${ALTERNATES_CONF}
+
+${DIR}/status.sh
