@@ -60,8 +60,14 @@ start_instance(){
     echo "starting: ${START_CMD}"
     ${START_CMD} > ${LOG_DIR}/${DIR_NAME}_$2.log 2>&1 & 
     echo $! > "${RUN_DIR}/$2.pid"
-
 }
+
+for pidfile in ${RUN_DIR}/*; 
+do
+    echo "looks like something may be running, fix that first"
+    exit 1
+done;
+
 setup_managed_repositories;
 # start each of our application instances
 # prod ports will be 9001, 9002
