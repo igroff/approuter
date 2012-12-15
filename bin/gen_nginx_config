@@ -11,14 +11,14 @@ do
     PORT=${parts[2]}
     UPSTREAM_CONF_FILE=${NGINX_CONF_ROOT}/upstream_${TYPE}_${NAME}
     ROUTE_CONF_FILE=${NGINX_CONF_ROOT}/route_${TYPE}_${NAME}
-    rm -f ${CONF_FILE}
+    rm -f ${UPSTREAM_CONF_FILE}
     rm -f ${ROUTE_CONF_FILE}
     if [ $TYPE == "prod" ]; then
         echo "upstream production {" >> ${UPSTREAM_CONF_FILE}
     else
         echo "upstream alternate_${NAME} {" >> ${UPSTREAM_CONF_FILE}
     fi
-    echo "  127.0.0.1:${PORT}" >> ${UPSTREAM_CONF_FILE}
+    echo "  server 127.0.0.1:${PORT};" >> ${UPSTREAM_CONF_FILE}
     echo "}" >> ${UPSTREAM_CONF_FILE}
 
     # our alternates need to have their proxy route configs generated
@@ -30,4 +30,5 @@ do
 
 done < ${RUN_DATA_FILE}
 
-cat ${NGINX_CONF_TEMPLATE} | sed -e s[{{conf_dir}}[${GENERATED_CONF_DIR}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g > ${NGINX_CONF_FILE}
+cat ${NGINX_CONF_TEMPLATE} | sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g > ${NGINX_CONF_FILE}
+cp templates/mime.types ${NGINX_CONF_ROOT}
