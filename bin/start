@@ -31,9 +31,6 @@ clone_repo_as_needed() {
 }
 
 setup_managed_repositories(){
-    # we're going to set up the managed repositories to be watched, so
-    # make sure we on't have an old crontab
-    rm -f ${VAR_DIR}/crontab
 
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ${REPO_CONF}`
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ${REPO_CONF}`
@@ -54,12 +51,15 @@ start_instance(){
     # $1 path to instance
     # $2 port
     spushd $1
-    DIR_NAME=`basename $1`
-    START_CMD=`echo "${START_CMD_TEMPLATE}" | sed -e s/{{port}}/$2/g`
+    NAME=`basename $1`
+    DIR_NAME=`basename $(dirname $1)`
+    PORT=$2
+    START_CMD=`echo "${START_CMD_TEMPLATE}" | sed -e s/{{port}}/${PORT}/g`
     START_CMD="${START_CMD}"
     echo "starting: ${START_CMD}"
-    ${START_CMD} > ${LOG_DIR}/${DIR_NAME}_$2.log 2>&1 & 
+    ${START_CMD} > ${LOG_DIR}/${NAME}_$2.log 2>&1 & 
     echo $! > "${RUN_DIR}/$2.pid"
+    printf "${DIR_NAME}\t${NAME}\t${PORT}\n" >> ${VAR_DIR}/run_data
     spopd
 }
 
@@ -70,6 +70,11 @@ do
         exit 1
     fi
 done;
+
+# we're going to set up the managed repositories to be watched, so
+# make sure we on't have an old crontab
+rm -f ${VAR_DIR}/crontab
+rm -r ${VAR_DIR}/run_data
 
 setup_managed_repositories;
 # start each of our application instances
