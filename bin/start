@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $DIR/environment
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
 
 mkdir -p ${LOG_DIR}
 mkdir -p ${RUN_DIR}
@@ -26,7 +26,7 @@ clone_repo_as_needed() {
         printf "repo found at $1, not cloning\n"
     fi
     # create our updater entry
-    echo "${DIR}/update_repo_as_needed expand $1 > 2>&1" >> ${VAR_DIR}/crontab
+    echo "${MY_DIR}/update_repo_as_needed expand $1 > 2>&1" >> ${VAR_DIR}/crontab
     echo "" >> ${VAR_DIR}/crontab
 }
 
@@ -35,15 +35,15 @@ setup_managed_repositories(){
     # make sure we on't have an old crontab
     rm -f ${VAR_DIR}/crontab
 
-    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ${MANAGED_ROOT}/repo.conf`
-    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ${MANAGED_ROOT}/repo.conf`
+    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ${REPO_CONF}`
+    clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ${REPO_CONF}`
 
     # alternates
     while read alternate 
     do
         echo "initializing alternate ${alternate}"
         ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
-        clone_repo_as_needed ${ALTERNATE_DIR} `cat ${MANAGED_ROOT}/repo.conf`
+        clone_repo_as_needed ${ALTERNATE_DIR} `cat ${REPO_CONF}`
         spushd ${ALTERNATE_DIR}
         git checkout ${alternate}
         spopd
@@ -82,7 +82,7 @@ while read alternate
 do
     PORT=`echo "${PORT}+1" | bc`
     ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
-    start_instance ${ALTERNATE_DIR} $PORT
+    start_instance ${ALTERNATE_DIR} ${PORT}
 done < ${ALTERNATES_CONF}
 
-${DIR}/status
+${MY_DIR}/status

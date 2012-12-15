@@ -1,7 +1,9 @@
 MANAGED_ROOT=`pwd`/managed
+CONF_ROOT=${MANAGED_ROOT}
+START_CMD_TEMPLATE=`cat ${CONF_ROOT}/starter.conf`
 ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
-ALTERNATES_CONF=${MANAGED_ROOT}/alternates.conf
-START_CMD_TEMPLATE=`cat ${MANAGED_ROOT}/starter.conf`
+ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
+REPO_CONF=${CONF_ROOT}/repo.conf
 VAR_DIR=${MANAGED_ROOT}/var
 LOG_DIR=${VAR_DIR}/log
 RUN_DIR=${VAR_DIR}/run
