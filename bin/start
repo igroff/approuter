@@ -59,7 +59,7 @@ start_instance(){
     echo "starting: ${START_CMD}"
     ${START_CMD} > ${LOG_DIR}/${NAME}_$2.log 2>&1 & 
     echo $! > "${RUN_DIR}/$2.pid"
-    printf "${DIR_NAME}\t${NAME}\t${PORT}\n" >> ${VAR_DIR}/run_data
+    printf "${DIR_NAME}\t${NAME}\t${PORT}\n" >> ${RUN_DATA_FILE}
     spopd
 }
 
@@ -72,7 +72,7 @@ do
 done;
 
 # we're going to set up the managed repositories to be watched, so
-# make sure we on't have an old crontab
+# make sure we don't have an old crontab
 rm -f ${VAR_DIR}/crontab
 rm -r ${VAR_DIR}/run_data
 
@@ -83,10 +83,10 @@ start_instance ${MANAGED_ROOT}/prod/instance1 9001
 start_instance ${MANAGED_ROOT}/prod/instance2 9002
 # alternates we'll start at 9050
 PORT=9049
-while read alternate
+while read alternate_name
 do
     PORT=`echo "${PORT}+1" | bc`
-    ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
+    ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate_name}
     start_instance ${ALTERNATE_DIR} ${PORT}
 done < ${ALTERNATES_CONF}
 

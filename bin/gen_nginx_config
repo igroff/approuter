@@ -1,0 +1,33 @@
+#! /usr/bin/env bash
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
+
+while read alternate_name
+do
+    IFS=`printf "\t"`;
+    declare -a parts=(${alternate_name})
+    TYPE=${parts[0]}
+    NAME=${parts[1]}
+    PORT=${parts[2]}
+    UPSTREAM_CONF_FILE=${NGINX_CONF_ROOT}/upstream_${TYPE}_${NAME}
+    ROUTE_CONF_FILE=${NGINX_CONF_ROOT}/route_${TYPE}_${NAME}
+    rm -f ${CONF_FILE}
+    rm -f ${ROUTE_CONF_FILE}
+    if [ $TYPE == "prod" ]; then
+        echo "upstream production {" >> ${UPSTREAM_CONF_FILE}
+    else
+        echo "upstream alternate_${NAME} {" >> ${UPSTREAM_CONF_FILE}
+    fi
+    echo "  127.0.0.1:${PORT}" >> ${UPSTREAM_CONF_FILE}
+    echo "}" >> ${UPSTREAM_CONF_FILE}
+
+    # our alternates need to have their proxy route configs generated
+    if [ $TYPE == "alternates" ]; then
+        echo "if (\$http_cookie ~* \"${ALTERNATE_ROUTE_COOKIE_PREFIX}_${NAME}\"){" >> ${ROUTE_CONF_FILE}
+        echo "  proxy_pass http://alternate_${NAME};" >> ${ROUTE_CONF_FILE}
+        echo "}" >> ${ROUTE_CONF_FILE}
+    fi
+
+done < ${RUN_DATA_FILE}
+
+cat ${NGINX_CONF_TEMPLATE} | sed -e s[{{conf_dir}}[${GENERATED_CONF_DIR}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g > ${NGINX_CONF_FILE}
