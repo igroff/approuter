@@ -18,6 +18,8 @@ else
     
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
+        # try to leave the environment as it was, so if there was NO
+        # LD_LIBRARY_PATH we leave it so that there isn't one
         if [ -n "$PRE_APPROUTER_LD_LIBRARY_PATH" ]; then
             export LD_LIBRARY_PATH=$PRE_APPROUTER_LD_LIBRARY_PATH
         else
