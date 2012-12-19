@@ -11,19 +11,25 @@ else
 
     HERE=`pwd`
     ROOT=${HERE}/build_output
-    export LD_LIBRARY_PATH=${ROOT}/lib:$PRE_APPROUTER_LD_LIBRARY_PATH
-    export PATH=${HERE}/bin:${ROOT}/bin:$PATH
-    export PATH=${ROOT}/usr/local/ssl/bin/:$PATH
-    export PATH=${ROOT}/sbin:$PATH
+    LD_LIBRARY_PATH=${ROOT}/lib:$PRE_APPROUTER_LD_LIBRARY_PATH
+    PATH=${HERE}/bin:${ROOT}/bin:$PATH
+    PATH=${ROOT}/usr/local/ssl/bin/:$PATH
+    PATH=${ROOT}/sbin:$PATH
     
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
-        export LD_LIBRARY_PATH=$PRE_APPROUTER_LD_LIBRARY_PATH
+        if [ -n "$PRE_APPROUTER_LD_LIBRARY_PATH" ]; then
+            export LD_LIBRARY_PATH=$PRE_APPROUTER_LD_LIBRARY_PATH
+        else
+            unset LD_LIBRARY_PATH
+        fi
         unset PRE_APPROUTER_LD_LIBRARY_PATH
         unset PRE_APPROUTER_PATH
         echo "I've removed the environment changes for you"
     }
 
+    export PATH
+    export LD_LIBRARY_PATH
     export -f deactivate
 fi
 
