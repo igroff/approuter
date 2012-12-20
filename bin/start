@@ -90,5 +90,6 @@ do
     start_instance ${ALTERNATE_DIR} ${PORT}
 done < ${ALTERNATES_CONF}
 
+$MY_DIR/gen_nginx_config
 nginx -c ${NGINX_CONF_FILE}
 ${MY_DIR}/status
