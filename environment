@@ -28,6 +28,7 @@ else
         unset PRE_APPROUTER_LD_LIBRARY_PATH
         unset PRE_APPROUTER_PATH
         echo "I've removed the environment changes for you"
+        unset -f deactivate
     }
 
     export PATH
