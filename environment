@@ -8,6 +8,7 @@ else
     # capture how the path was before we started
     export PRE_APPROUTER_PATH=$PATH
     export PRE_APPROUTER_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
+    export PRE_APPROUTER_PS1=$PS1
 
     HERE=`pwd`
     ROOT=${HERE}/build_output
@@ -15,9 +16,11 @@ else
     PATH=${HERE}/bin:${ROOT}/bin:$PATH
     PATH=${ROOT}/usr/local/ssl/bin/:$PATH
     PATH=${ROOT}/sbin:$PATH
+    PS1=\(ar\)$PS1
     
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
+        export PS1=$PRE_APPROUTER_PS1
         # try to leave the environment as it was, so if there was NO
         # LD_LIBRARY_PATH we leave it so that there isn't one
         if [ -n "$PRE_APPROUTER_LD_LIBRARY_PATH" ]; then
@@ -27,12 +30,13 @@ else
         fi
         unset PRE_APPROUTER_LD_LIBRARY_PATH
         unset PRE_APPROUTER_PATH
-        echo "I've removed the environment changes for you"
+        unset PRE_APPROUTER_PS1
         unset -f deactivate
     }
 
     export PATH
     export LD_LIBRARY_PATH
+    export PS1
     export -f deactivate
 fi
 
