@@ -40,12 +40,8 @@ ${BUILD_ROOT}:
 	cd ${PACKAGE_DIR} && for file in *.tar.gz; do tar xf $${file} -C ${BUILD_ROOT}; done
 
 remanaged:
-	@-rm -rf ./managed/prod/instance1/*
-	@-rm -rf ./managed/prod/instance1/.??*
-	@-rm -rf ./managed/prod/instance2/*
-	@-rm -rf ./managed/prod/instance2/.??*
-	@-rm -rf ./managed/alternates/*
+	@-rm -rf ./managed
 
-clean:
+clean: remanaged
 	-rm -rf ${INSTALL_LOCATION}
 	-rm -rf ${BUILD_ROOT}
