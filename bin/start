@@ -58,17 +58,19 @@ start_instance(){
     START_CMD=`echo "${START_CMD_TEMPLATE}" | sed -e s/{{port}}/${PORT}/g`
     START_CMD="${START_CMD}"
     PIDFILE_NAME=${NAME}_${2}.pid
+    CTL_SFX=${NAME}
 
     # write out control files for the instances we start
-    echo "#! /usr/bin/env bash" > ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "pushd $1 > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "${START_CMD} > ${LOG_DIR}/${NAME}_$2.log 2>&1 &" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "INSTANCE_PID=\$!"  >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "echo \${INSTANCE_PID} > ${RUN_DIR}/${PIDFILE_NAME}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "printf '#! /usr/bin/env bash\nkill \$(' > ${RUNTIME_BIN_DIR}/stop_${NAME}_${2}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "printf \"cat ${RUN_DIR}/${PIDFILE_NAME})\n\" >> ${RUNTIME_BIN_DIR}/stop_${NAME}_${2}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "printf \"[ \$\? == 0 ] && rm ${RUN_DIR}/${PIDFILE_NAME}\" >> ${RUNTIME_BIN_DIR}/stop_${NAME}_${2}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
-    echo "popd > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "#! /usr/bin/env bash" > ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "pushd $1 > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "${START_CMD} > ${LOG_DIR}/${CTL_SFX}.log 2>&1 &" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "INSTANCE_PID=\$!"  >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "echo \${INSTANCE_PID} > ${RUN_DIR}/${PIDFILE_NAME}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "printf '#! /usr/bin/env bash\nkill \$(' > ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "printf \"cat ${RUN_DIR}/${PIDFILE_NAME})\n\" >> ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "printf \"[ \$\? == 0 ] && rm ${RUN_DIR}/${PIDFILE_NAME}\" >> ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "chmod +x ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "popd > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
 
     # keeping track of the info under which our instances are running
     # for no particular reason... yet
@@ -86,7 +88,8 @@ done;
 # we're going to set up the managed repositories to be watched, so
 # make sure we don't have an old crontab
 rm -f ${VAR_DIR}/crontab
-rm -r ${VAR_DIR}/run_data
+rm -f ${VAR_DIR}/run_data
+rm -f ${RUNTIME_BIN_DIR}/*
 
 setup_managed_repositories;
 # start each of our application instances
@@ -109,6 +112,7 @@ printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_FILE} -s quit" > ${RUNTIME_B
 chmod +x ${RUNTIME_BIN_DIR}/*
 for start_file in ${RUNTIME_BIN_DIR}/start*; 
 do
+  echo "starting ${start_file}"
   ${start_file}
 done
 ${MY_DIR}/status
