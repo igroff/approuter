@@ -6,8 +6,8 @@ source ${MY_DIR}/environment
 mkdir -p ${LOG_DIR}
 mkdir -p ${RUN_DIR}
 
-spushd(){ pushd $1 > /dev/null 2>&1; }
-spopd(){ popd $1 > /dev/null 2>&1 ; }
+silent_pushd(){ pushd $1 > /dev/null 2>&1; }
+silent_popd(){ popd $1 > /dev/null 2>&1 ; }
 
 clone_repo_as_needed() {
     # $1 - the directory to check
@@ -19,9 +19,9 @@ clone_repo_as_needed() {
     DIRNAME=`basename $1`
     if [ ! -d ${1}/.git ]; then
         # no git, clone
-        spushd ${PARENT_PATH}
+        silent_pushd ${PARENT_PATH}
         git clone ${2} ${DIRNAME} 
-        spopd
+        silent_popd
     else
         printf "repo found at $1, not cloning\n"
     fi
@@ -33,6 +33,7 @@ clone_repo_as_needed() {
 
 setup_managed_repositories(){
 
+    # two prod instances so we can roll
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ${REPO_CONF}`
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ${REPO_CONF}`
 
@@ -42,16 +43,16 @@ setup_managed_repositories(){
         echo "initializing alternate ${alternate}"
         ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
         clone_repo_as_needed ${ALTERNATE_DIR} `cat ${REPO_CONF}`
-        spushd ${ALTERNATE_DIR}
+        silent_pushd ${ALTERNATE_DIR}
         git checkout ${alternate}
-        spopd
+        silent_popd
     done < ${ALTERNATES_CONF}
 }
 
 start_instance(){
     # $1 path to instance
     # $2 port
-    spushd $1
+    silent_pushd $1
     NAME=`basename $1`
     DIR_NAME=`basename $(dirname $1)`
     PORT=$2
@@ -61,7 +62,7 @@ start_instance(){
     ${START_CMD} > ${LOG_DIR}/${NAME}_$2.log 2>&1 & 
     echo $! > "${RUN_DIR}/$2.pid"
     printf "${DIR_NAME}\t${NAME}\t${PORT}\n" >> ${RUN_DATA_FILE}
-    spopd
+    silent_popd
 }
 
 for pidfile in ${RUN_DIR}/*; 
