@@ -70,6 +70,7 @@ FETCH_RESULTS=`git fetch --all `
 if [ $? -ne 0 ]; then
     echo "fetch error"
     echo $FETCH_RESULTS
+    exit 2
 fi
 CURRENT_BRANCH=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 CURRENT_SHA=`git log -n 1 --no-merges --pretty=format:%h`
@@ -79,7 +80,9 @@ HAS_CHANGES=`git diff HEAD...origin/${CURRENT_BRANCH} --raw`
 log "checking ${REPO_DIR} for any available changes from ${ORIGIN_URL}"
 if [ "${HAS_CHANGES}x" == "x" ]; then
     log "no changes, nothing to update"
+    exit 3
 else
     log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
     git reset --hard origin/${CURRENT_BRANCH}
+    exit 0
 fi
