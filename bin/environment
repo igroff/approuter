@@ -6,6 +6,7 @@ ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
 VAR_DIR=${MANAGED_ROOT}/var
 LOG_DIR=${VAR_DIR}/log
 RUN_DIR=${VAR_DIR}/run
+RUNTIME_BIN_DIR=${VAR_DIR}/bin
 RUN_DATA_FILE=${VAR_DIR}/run_data
 REPO_CONF=${CONF_ROOT}/repo.conf
 START_CMD_TEMPLATE=`cat ${CONF_ROOT}/starter.conf`
@@ -18,3 +19,4 @@ NGINX_CONF_TEMPLATE=`pwd`/templates/nginx.conf
 
 mkdir -p ${GENERATED_CONF_DIR}
 mkdir -p ${NGINX_CONF_ROOT}
+mkdir -p ${RUNTIME_BIN_DIR}

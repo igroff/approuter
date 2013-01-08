@@ -52,17 +52,27 @@ setup_managed_repositories(){
 start_instance(){
     # $1 path to instance
     # $2 port
-    silent_pushd $1
     NAME=`basename $1`
     DIR_NAME=`basename $(dirname $1)`
     PORT=$2
     START_CMD=`echo "${START_CMD_TEMPLATE}" | sed -e s/{{port}}/${PORT}/g`
     START_CMD="${START_CMD}"
-    echo "starting: ${START_CMD}"
-    ${START_CMD} > ${LOG_DIR}/${NAME}_$2.log 2>&1 & 
-    echo $! > "${RUN_DIR}/$2.pid"
+    PIDFILE_NAME=${NAME}_${2}.pid
+
+    # write out control files for the instances we start
+    echo "#! /usr/bin/env bash" > ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "pushd $1 > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "${START_CMD} > ${LOG_DIR}/${NAME}_$2.log 2>&1 &" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "INSTANCE_PID=\$!"  >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "echo \${INSTANCE_PID} > ${RUN_DIR}/${PIDFILE_NAME}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "printf '#! /usr/bin/env bash\nkill \$(' > ${RUNTIME_BIN_DIR}/stop_${NAME}_${2}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "printf \"cat ${RUN_DIR}/${PIDFILE_NAME})\n\" >> ${RUNTIME_BIN_DIR}/stop_${NAME}_${2}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "printf \"[ \$\? == 0 ] && rm ${RUN_DIR}/${PIDFILE_NAME}\" >> ${RUNTIME_BIN_DIR}/stop_${NAME}_${2}" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+    echo "popd > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${NAME}_${2}
+
+    # keeping track of the info under which our instances are running
+    # for no particular reason... yet
     printf "${DIR_NAME}\t${NAME}\t${PORT}\n" >> ${RUN_DATA_FILE}
-    silent_popd
 }
 
 for pidfile in ${RUN_DIR}/*; 
@@ -93,5 +103,12 @@ do
 done < ${ALTERNATES_CONF}
 
 $MY_DIR/gen_nginx_config
-nginx -c ${NGINX_CONF_FILE}
+# write out nginx control files for the instance
+printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_FILE}" > ${RUNTIME_BIN_DIR}/start_nginx
+printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_FILE} -s quit" > ${RUNTIME_BIN_DIR}/stop_nginx
+chmod +x ${RUNTIME_BIN_DIR}/*
+for start_file in ${RUNTIME_BIN_DIR}/start*; 
+do
+  ${start_file}
+done
 ${MY_DIR}/status
