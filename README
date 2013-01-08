@@ -37,7 +37,7 @@ managed/var
     remote changes (from their repository as defined by the repo.conf.
 
 etc/repo.conf
-    Stores the repo url (git) that refers the the coded managed by this instance of the
+    Stores the repo url (git) that refers the the code managed by this instance of the
     approuter. This is the repository that contains the code that will be cloned into
     the production and alternate locations, and ultimately run.
 
