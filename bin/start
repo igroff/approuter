@@ -26,7 +26,8 @@ clone_repo_as_needed() {
         printf "repo found at $1, not cloning\n"
     fi
     # create our updater entry
-    echo "${MY_DIR}/update_repo_as_needed expand $1 > 2>&1" >> ${VAR_DIR}/crontab
+    EXPANDED=`${MY_DIR}/update_repo_as_needed expand $1`
+    echo "$EXPANDED > 2>&1" >> ${VAR_DIR}/crontab
     echo "" >> ${VAR_DIR}/crontab
 }
 
