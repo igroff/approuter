@@ -2,4 +2,4 @@ build_output/
 tmp/
 *.pyc
 *.swp
-managed/
+managed/*
