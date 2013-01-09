@@ -2,10 +2,10 @@
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
-while read alternate_name
+while read instance_name
 do
     IFS=`printf "\t"`;
-    declare -a parts=(${alternate_name})
+    declare -a parts=(${instance_name})
     TYPE=${parts[0]}
     NAME=${parts[1]}
     PORT=${parts[2]}
