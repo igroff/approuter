@@ -38,7 +38,7 @@ if [ $ACTION == "help" ]; then
     echo "       creating crontab entries"
     echo "    directory - optional repository directory to check, if not "
     echo "       provided the current directory is checked"
-    exit 0
+    exit 1
 fi
 
 shift
@@ -58,19 +58,19 @@ REPO_DIR=`pwd`
 git rev-parse --git-dir >> /dev/null 2>&1
 if [ $? -ne 0 ]; then
     log "${REPO_DIR} doesn't appear to be a git repo, nothing to do"
-    exit 1
+    exit 2
 fi
 
 if [ $ACTION == "expand" ]; then
     printf "* * * * *\t$0 $REPO_DIR"
-    exit 0
+    exit 3
 fi
 
 FETCH_RESULTS=`git fetch --all `
 if [ $? -ne 0 ]; then
     echo "fetch error"
     echo $FETCH_RESULTS
-    exit 2
+    exit 4
 fi
 CURRENT_BRANCH=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
 CURRENT_SHA=`git log -n 1 --no-merges --pretty=format:%h`
@@ -80,9 +80,9 @@ HAS_CHANGES=`git diff HEAD...origin/${CURRENT_BRANCH} --raw`
 log "checking ${REPO_DIR} for any available changes from ${ORIGIN_URL}"
 if [ "${HAS_CHANGES}x" == "x" ]; then
     log "no changes, nothing to update"
-    exit 3
+    exit 5
 else
     log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
     git reset --hard origin/${CURRENT_BRANCH}
-    exit 0
+    exit 100
 fi
