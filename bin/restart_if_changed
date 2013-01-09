@@ -1,0 +1,25 @@
+#! /usr/bin/env bash
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
+
+INSTANCE_DIR=$1
+
+if [ ! -n "${INSTANCE_DIR}" ]; then
+  echo you must provide a directory to check
+  exit 1
+fi
+
+${MY_DIR}/update_repo_as_needed ${INSTANCE_DIR}
+
+if [ $? == 100 ]; then
+  # we updated, need to stop and start it
+  set_instance_name_from_dir ${INSTANCE_DIR}
+  set_instance_start_control_file_path ${INSTANCE_DIR}
+  set_instance_stop_control_file_path ${INSTANCE_DIR}
+  echo "instance ${INSTANCE_NAME} has changed, restarting"
+  ${STOP_CTL_FILE}
+  ${START_CTL_FILE}
+  echo ""
+fi
+
