@@ -52,29 +52,31 @@ setup_managed_repositories(){
 start_instance(){
     # $1 path to instance
     # $2 port
-    NAME=`basename $1`
+    set_instance_name_from_dir $1
     DIR_NAME=`basename $(dirname $1)`
     PORT=$2
     START_CMD=`echo "${START_CMD_TEMPLATE}" | sed -e s/{{port}}/${PORT}/g`
     START_CMD="${START_CMD}"
-    PIDFILE_NAME=${NAME}_${2}.pid
-    CTL_SFX=${NAME}
+    PIDFILE_NAME=${INSTANCE_NAME}_${2}.pid
+    CTL_SFX=${INSTANCE_NAME}
+    set_instance_start_control_file_path $1
+    set_instance_stop_control_file_path $1
 
     # write out control files for the instances we start
-    echo "#! /usr/bin/env bash" > ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "pushd $1 > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "${START_CMD} > ${LOG_DIR}/${CTL_SFX}.log 2>&1 &" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "#! /usr/bin/env bash" > ${START_CTL_FILE}
+    echo "pushd $1 > /dev/null 2>&1" >> ${START_CTL_FILE}
+    echo "${START_CMD} > ${LOG_DIR}/${CTL_SFX}.log 2>&1 &" >> ${START_CTL_FILE}
     echo "INSTANCE_PID=\$!"  >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "echo \${INSTANCE_PID} > ${RUN_DIR}/${PIDFILE_NAME}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "printf '#! /usr/bin/env bash\nkill \$(' > ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "printf \"cat ${RUN_DIR}/${PIDFILE_NAME})\n\" >> ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "printf \"[ \$\? == 0 ] && rm ${RUN_DIR}/${PIDFILE_NAME}\" >> ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "chmod +x ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "popd > /dev/null 2>&1" >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
+    echo "echo \${INSTANCE_PID} > ${RUN_DIR}/${PIDFILE_NAME}" >> ${START_CTL_FILE}
+    echo "printf '#! /usr/bin/env bash\nkill \$(' > ${STOP_CTL_FILE}" >> ${START_CTL_FILE}
+    echo "printf \"cat ${RUN_DIR}/${PIDFILE_NAME})\n\" >> ${STOP_CTL_FILE}" >> ${START_CTL_FILE}
+    echo "printf \"[ \$\? == 0 ] && rm ${RUN_DIR}/${PIDFILE_NAME}\" >> ${STOP_CTL_FILE}" >> ${START_CTL_FILE}
+    echo "chmod +x ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${START_CTL_FILE}
+    echo "popd > /dev/null 2>&1" >> ${START_CTL_FILE}
 
-    # keeping track of the info under which our instances are running
-    # for no particular reason... yet
-    printf "${DIR_NAME}\t${NAME}\t${PORT}\n" >> ${RUN_DATA_FILE}
+    # keeping track of our running instance information so that we 
+    # can build our nginx config
+    printf "${DIR_NAME}\t${INSTANCE_NAME}\t${PORT}\n" >> ${RUN_DATA_FILE}
 }
 
 for pidfile in ${RUN_DIR}/*; 
@@ -85,8 +87,7 @@ do
     fi
 done;
 
-# we're going to set up the managed repositories to be watched, so
-# make sure we don't have an old crontab
+# cleanup our geneated files so we don't orphan anything and confuse people
 rm -f ${VAR_DIR}/crontab
 rm -f ${VAR_DIR}/run_data
 rm -f ${RUNTIME_BIN_DIR}/*

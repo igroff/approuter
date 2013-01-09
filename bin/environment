@@ -20,3 +20,22 @@ NGINX_CONF_TEMPLATE=`pwd`/templates/nginx.conf
 mkdir -p ${GENERATED_CONF_DIR}
 mkdir -p ${NGINX_CONF_ROOT}
 mkdir -p ${RUNTIME_BIN_DIR}
+
+function set_instance_name_from_dir(){
+  INSTANCE_DIR=$1
+  INSTANCE_NAME=`basename $1`
+}
+
+function set_instance_start_control_file_path(){
+  INSTANCE_PATH=$1
+  START_CTL_FILE=${RUNTIME_BIN_DIR}/start_${INSTANCE_NAME}
+}
+
+function set_instance_stop_control_file_path(){
+  INSTANCE_PATH=$1
+  STOP_CTL_FILE=${RUNTIME_BIN_DIR}/stop_${INSTANCE_NAME}
+}
+export -f set_instance_name_from_dir
+export -f set_instance_start_control_file_path
+export -f set_instance_stop_control_file_path
+
