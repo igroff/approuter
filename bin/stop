@@ -1,8 +1,13 @@
 #! /usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/environment
-for stop_ctl_file in ${RUNTIME_BIN_DIR}/stop*;
-do
-  ${stop_ctl_file}
-done
-${DIR}/status
+ACTION=$1
+if [ "$ACTION" == "flush" ]; then
+  rm ${RUN_DIR}/*
+else
+  for stop_ctl_file in ${RUNTIME_BIN_DIR}/stop*;
+  do
+    ${stop_ctl_file}
+  done
+  ${DIR}/status
+fi
