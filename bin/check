@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
+
+while read instance_name
+do
+    IFS=`printf "\t"`;
+    declare -a parts=(${instance_name})
+    TYPE=${parts[0]}
+    NAME=${parts[1]}
+    PORT=${parts[2]}
+    echo checking ${NAME} on ${PORT}
+    curl http://localhost:${PORT}
+    echo ""
+
+done < ${RUN_DATA_FILE}
