@@ -27,7 +27,7 @@ clone_repo_as_needed() {
     fi
     # create our updater entry
     EXPANDED=`${MY_DIR}/update_repo_as_needed expand $1`
-    echo "* * * * * ${MY_DIR}/restart_if_needed $1 > ${LOG_DIR}/restart_${DIRNAME}.log 2>&1" >> ${VAR_DIR}/crontab
+    echo "* * * * * ${MY_DIR}/restart_if_changed $1 > ${LOG_DIR}/restart_${DIRNAME}.log 2>&1" >> ${VAR_DIR}/crontab
 }
 
 setup_managed_repositories(){
