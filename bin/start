@@ -89,12 +89,14 @@ done;
 rm -f ${VAR_DIR}/crontab
 rm -f ${VAR_DIR}/run_data
 rm -f ${RUNTIME_BIN_DIR}/*
+rm -rf ${GENERATED_CONF_DIR}
 
 setup_managed_repositories;
 # start each of our application instances
 # prod ports will be 9001, 9002
 start_instance ${MANAGED_ROOT}/prod/instance1 9001
 start_instance ${MANAGED_ROOT}/prod/instance2 9002
+
 # alternates we'll start at 9050
 PORT=9049
 while read alternate_name
@@ -104,13 +106,15 @@ do
     start_instance ${ALTERNATE_DIR} ${PORT}
 done < ${ALTERNATES_CONF}
 
+# create our nginx config and link up our active one
 $MY_DIR/gen_nginx_config
-[ -f ${NGINX_CONF_ACTIVE} ] && rm ${NGINX_CONF_ACTIVE}
+[ -f ${NGINX_CONF_LINK} ] && rm ${NGINX_CONF_LINK}
 # always start with number one
-ln -s ${NGINX_CONF_FILE_1} ${NGINX_CONF_ACTIVE}
-# write out nginx control files for the instance
-printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_ACTIVE}" > ${RUNTIME_BIN_DIR}/start_nginx
-printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_ACTIVE} -s quit" > ${RUNTIME_BIN_DIR}/stop_nginx
+ln -s ${NGINX_CONF_FILE_1} ${NGINX_CONF_LINK}
+
+# write out nginx control files
+printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK}" > ${RUNTIME_BIN_DIR}/start_nginx
+printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK} -s quit" > ${RUNTIME_BIN_DIR}/stop_nginx
 chmod +x ${RUNTIME_BIN_DIR}/*
 for start_file in ${RUNTIME_BIN_DIR}/start*; 
 do
