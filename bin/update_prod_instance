@@ -1,5 +1,8 @@
 #! /usr/bin/env bash
 
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
+
 # determine active instance
 # check for updates to non active instance
 # if it has updates, update

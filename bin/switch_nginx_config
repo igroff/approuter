@@ -3,11 +3,10 @@
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
-ACTIVE_CONFIG=`readlink ${NGINX_CONF_LINK}`
-if [ ${ACTIVE_CONFIG} == ${NGINX_CONF_FILE_1} ]; then
+if [ ${NGINX_ACTIVE_CONFIG} == ${NGINX_CONF_FILE_1} ]; then
   ln -sf ${NGINX_CONF_FILE_2} ${NGINX_CONF_LINK}
 fi
-if [ ${ACTIVE_CONFIG} == ${NGINX_CONF_FILE_2} ]; then
+if [ ${NGINX_ACTIVE_CONFIG} == ${NGINX_CONF_FILE_2} ]; then
   ln -sf ${NGINX_CONF_FILE_1} ${NGINX_CONF_LINK}
 fi
 kill -HUP `cat ${NGINX_PIDFILE}`
