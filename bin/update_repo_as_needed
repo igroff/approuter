@@ -22,6 +22,8 @@ case $ACTION in
         ;;
     expand)
         ;;
+    test_only)
+        ;;
     *)
         # don't know what it is, must be trying to give us a dir
         REPO_DIR=$ACTION
@@ -32,12 +34,14 @@ case $ACTION in
 esac
 
 if [ $ACTION == "help" ]; then
-    echo "`basename $0` [expand] [directory]"
+    echo "`basename $0` [expand | test_only] [directory]"
     echo "    expand - causes the output of the full path to the script and the"
     echo "       repo directories to be sent to stdout, used to facilitate"
     echo "       creating crontab entries"
     echo "    directory - optional repository directory to check, if not "
     echo "       provided the current directory is checked"
+    echo "    test_only - indicates that the check to see if an update is available"
+    echo "       should be performed, but no update should be done"
     exit 1
 fi
 
@@ -82,7 +86,11 @@ if [ "${HAS_CHANGES}x" == "x" ]; then
     log "no changes, nothing to update"
     exit 5
 else
-    log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
-    git reset --hard origin/${CURRENT_BRANCH}
+    if [ ! "$ACTION" == "test_only" ]; then
+      log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
+      git reset --hard origin/${CURRENT_BRANCH}
+    else
+      log "changes detected for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
+    fi
     exit 100
 fi
