@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+
+# determine active instance
+# check for updates to non active instance
+# if it has updates, update
+# start instance
+# switch nginx config
+# update newly inactive instance
+# start instance
+
+# we're leaving both instances running at all times
+# we can check that both prod instances are at the same version
+# as (outside the switch window) they should both be up and
+# at the same version
