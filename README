@@ -34,7 +34,7 @@ managed/var
     This directory contains all the generated output from running the managed apps.  
     This includes: log files, config files, run data (pidfiles) etc.  It also includes
     the generated crontab that can be used to monitor the managed applications for 
-    remote changes (from their repository as defined by the repo.conf.
+    remote changes (from their repository as defined by the repo.conf).
 
 etc/repo.conf
     Stores the repo url (git) that refers the the code managed by this instance of the
