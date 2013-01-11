@@ -108,9 +108,13 @@ done < ${ALTERNATES_CONF}
 
 # create our nginx config and link up our active one
 $MY_DIR/gen_nginx_config
-[ -f ${NGINX_CONF_LINK} ] && rm ${NGINX_CONF_LINK}
 # always start with number one
+# im not gonna force this one because the link should not exist
 ln -s ${NGINX_CONF_FILE_1} ${NGINX_CONF_LINK}
+if [ $? != 0 ]; then
+  echo whoa, something is broken the nginx.conf link should not be there
+  exit 1883
+fi
 
 # write out nginx control files
 printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK}" > ${RUNTIME_BIN_DIR}/start_nginx
