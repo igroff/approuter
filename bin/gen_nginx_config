@@ -30,5 +30,6 @@ do
 
 done < ${RUN_DATA_FILE}
 
-cat ${NGINX_CONF_TEMPLATE} | sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g  | sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE}
+cat ${NGINX_CONF_TEMPLATE_1} | sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g  | sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_1}
+cat ${NGINX_CONF_TEMPLATE_2} | sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g  | sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_2}
 cp templates/mime.types ${NGINX_CONF_ROOT}

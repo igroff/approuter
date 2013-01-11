@@ -14,8 +14,13 @@ ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
 GENERATED_CONF_DIR=${VAR_DIR}/conf
 ALTERNATE_ROUTE_COOKIE_PREFIX=arcp
 NGINX_CONF_ROOT=${GENERATED_CONF_DIR}/nginx
-NGINX_CONF_FILE=${GENERATED_CONF_DIR}/nginx/nginx.conf
-NGINX_CONF_TEMPLATE=`pwd`/templates/nginx.conf
+NGINX_CONF_ACTIVE=${GENERATED_CONF_DIR}/nginx/nginx.conf
+NGINX_CONF_FILE_1=${GENERATED_CONF_DIR}/nginx/nginx.1.conf
+NGINX_CONF_FILE_2=${GENERATED_CONF_DIR}/nginx/nginx.2.conf
+# we roll between 2 production instances so we have
+# one config for each
+NGINX_CONF_TEMPLATE_1=${ROOT}/templates/nginx.1.conf
+NGINX_CONF_TEMPLATE_2=${ROOT}/templates/nginx.2.conf
 
 mkdir -p ${GENERATED_CONF_DIR}
 mkdir -p ${NGINX_CONF_ROOT}

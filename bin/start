@@ -26,7 +26,6 @@ clone_repo_as_needed() {
         printf "repo found at $1, not cloning\n"
     fi
     # create our updater entry
-    EXPANDED=`${MY_DIR}/update_repo_as_needed expand $1`
     echo "* * * * * ${MY_DIR}/restart_if_changed $1 > ${LOG_DIR}/restart_${DIRNAME}.log 2>&1" >> ${VAR_DIR}/crontab
 }
 
@@ -106,9 +105,12 @@ do
 done < ${ALTERNATES_CONF}
 
 $MY_DIR/gen_nginx_config
+[ -f ${NGINX_CONF_ACTIVE} ] && rm ${NGINX_CONF_ACTIVE}
+# always start with number one
+ln -s ${NGINX_CONF_FILE_1} ${NGINX_CONF_ACTIVE}
 # write out nginx control files for the instance
-printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_FILE}" > ${RUNTIME_BIN_DIR}/start_nginx
-printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_FILE} -s quit" > ${RUNTIME_BIN_DIR}/stop_nginx
+printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_ACTIVE}" > ${RUNTIME_BIN_DIR}/start_nginx
+printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_ACTIVE} -s quit" > ${RUNTIME_BIN_DIR}/stop_nginx
 chmod +x ${RUNTIME_BIN_DIR}/*
 for start_file in ${RUNTIME_BIN_DIR}/start*; 
 do
