@@ -25,8 +25,12 @@ clone_repo_as_needed() {
     else
         printf "repo found at $1, not cloning\n"
     fi
-    # create our updater entry
-    echo "* * * * * ${MY_DIR}/restart_if_changed $1 > ${LOG_DIR}/restart_${DIRNAME}.log 2>&1" >> ${VAR_DIR}/crontab
+    # we'll be writing out our updater entires to a crontab
+    # for our alternates.  the prod updater is a constant and
+    # doesn't vary so we handle it elsewhere as a static entry
+    if [ "`basename ${PARENT_PATH}`" = "alternates" ]; then
+      echo "* * * * * ${MY_DIR}/restart_if_changed $1 > ${LOG_DIR}/restart_${DIRNAME}.log 2>&1" >> ${VAR_DIR}/crontab
+    fi
 }
 
 setup_managed_repositories(){
@@ -97,6 +101,8 @@ setup_managed_repositories;
 start_instance ${MANAGED_ROOT}/prod/instance1 9001
 start_instance ${MANAGED_ROOT}/prod/instance2 9002
 
+# prod crontab, since it's a single entry and dose't vary
+echo "* * * * * ${MY_DIR}/update_prod_instance > ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
 # alternates we'll start at 9050
 PORT=9049
 while read alternate_name
