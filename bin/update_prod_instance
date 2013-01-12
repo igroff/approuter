@@ -3,13 +3,32 @@
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
-# determine active instance
-# check for updates to non active instance
-# if it has updates, update
-# start instance
-# switch nginx config
-# update newly inactive instance
-# start instance
+# our active and passive instances are all determined for us
+# in the environment 'include'
+# check for updates to passive instance
+update_repo_as_needed test_only ${PASSIVE_PROD_INSTANCE}
+# if it has updates (update_repo_as_needed returns 100)
+if [ $? == 100 ]; then
+  #   stop the instance 
+  ${PASSIVE_PROD_INSTANCE_STOP_CTL_FILE}
+  #   update instance
+  update_repo_as_needed ${PASSIVE_PROD_INSTANCE}
+  #   start instance
+  ${PASSIVE_PROD_INSTANCE_START_CTL_FILE}
+  #   switch nginx config after which our passive references
+  #   will be active and our active references will be passive
+  switch_nginx_config
+  #   ideally we'd wait for the old instance to drain....
+  #   update the newly passive instance
+  ${ACTIVE_PROD_INSTANCE_STOP_CTL_FILE}
+  update_repo_as_needed ${ACTIVE_PROD_INSTANCE}
+  if [ $? != 100 ]; then
+    echo "mismatched prod repo versions!"
+    exit 1
+  fi
+  #   start newly passive instance
+  ${ACTIVE_PROD_INSTANCE_START_CTL_FILE}
+fi
 
 # we're leaving both instances running at all times
 # we can check that both prod instances are at the same version

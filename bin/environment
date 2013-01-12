@@ -1,32 +1,4 @@
 #! /usr/bin/env bash
-ROOT=`pwd`
-MANAGED_ROOT=`pwd`/managed
-CONF_ROOT=${ROOT}/etc
-ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
-VAR_DIR=${MANAGED_ROOT}/var
-LOG_DIR=${VAR_DIR}/log
-RUN_DIR=${VAR_DIR}/run
-RUNTIME_BIN_DIR=${VAR_DIR}/bin
-RUN_DATA_FILE=${VAR_DIR}/run_data
-REPO_CONF=${CONF_ROOT}/repo.conf
-START_CMD_TEMPLATE=`cat ${CONF_ROOT}/starter.conf`
-ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
-GENERATED_CONF_DIR=${VAR_DIR}/conf
-ALTERNATE_ROUTE_COOKIE_PREFIX=arcp
-NGINX_PIDFILE=${RUN_DIR}/nginx.pid
-NGINX_CONF_ROOT=${GENERATED_CONF_DIR}/nginx
-NGINX_CONF_LINK=${GENERATED_CONF_DIR}/nginx/nginx.conf
-NGINX_ACTIVE_CONFIG=`readlink ${NGINX_CONF_LINK}`
-NGINX_CONF_FILE_1=${GENERATED_CONF_DIR}/nginx/nginx.1.conf
-NGINX_CONF_FILE_2=${GENERATED_CONF_DIR}/nginx/nginx.2.conf
-# we roll between 2 production instances so we have
-# one config for each
-NGINX_CONF_TEMPLATE_1=${ROOT}/templates/nginx.1.conf
-NGINX_CONF_TEMPLATE_2=${ROOT}/templates/nginx.2.conf
-
-mkdir -p ${GENERATED_CONF_DIR}
-mkdir -p ${NGINX_CONF_ROOT}
-mkdir -p ${RUNTIME_BIN_DIR}
 
 function set_instance_name_from_dir(){
   INSTANCE_DIR=$1
@@ -42,6 +14,66 @@ function set_instance_stop_control_file_path(){
   INSTANCE_PATH=$1
   STOP_CTL_FILE=${RUNTIME_BIN_DIR}/stop_${INSTANCE_NAME}
 }
+
+ROOT=`pwd`
+MANAGED_ROOT=`pwd`/managed
+CONF_ROOT=${ROOT}/etc
+ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
+ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
+ALTERNATE_ROUTE_COOKIE_PREFIX=arcp
+PROD_ROOT=${MANAGED_ROOT}/prod
+VAR_DIR=${MANAGED_ROOT}/var
+LOG_DIR=${VAR_DIR}/log
+RUN_DIR=${VAR_DIR}/run
+RUNTIME_BIN_DIR=${VAR_DIR}/bin
+RUN_DATA_FILE=${VAR_DIR}/run_data
+REPO_CONF=${CONF_ROOT}/repo.conf
+START_CMD_TEMPLATE=`cat ${CONF_ROOT}/starter.conf`
+GENERATED_CONF_DIR=${VAR_DIR}/conf
+
+NGINX_PIDFILE=${RUN_DIR}/nginx.pid
+NGINX_CONF_ROOT=${GENERATED_CONF_DIR}/nginx
+NGINX_CONF_LINK=${GENERATED_CONF_DIR}/nginx/nginx.conf
+NGINX_ACTIVE_CONFIG=`readlink ${NGINX_CONF_LINK}`
+NGINX_CONF_FILE_1=${GENERATED_CONF_DIR}/nginx/nginx.1.conf
+NGINX_CONF_FILE_2=${GENERATED_CONF_DIR}/nginx/nginx.2.conf
+# we roll between 2 production instances so we have
+# one config for each
+NGINX_CONF_TEMPLATE_1=${ROOT}/templates/nginx.1.conf
+NGINX_CONF_TEMPLATE_2=${ROOT}/templates/nginx.2.conf
+# set our passive (inactive) config for our production 
+# instance.  this implies the passive and active instaces
+# so we'll set them here as well.  I'm deliberately going
+# to test and set each case so if something goes wonky
+# we get nothing set at all and fail in a big way
+if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_1}" ]; then
+  echo "instance1 is active"
+  NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_2}
+  ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
+  PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
+fi
+if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_2}" ]; then
+  echo "instance2 is active"
+  NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_1}
+  ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
+  PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
+fi
+set_instance_name_from_dir ${ACTIVE_PROD_INSTANCE}
+set_instance_start_control_file_path ${ACTIVE_PROD_INSTANCE}
+ACTIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
+set_instance_stop_control_file_path ${ACTIVE_PROD_INSTANCE}
+ACTIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
+
+set_instance_name_from_dir ${PASSIVE_PROD_INSTANCE}
+set_instance_start_control_file_path ${PASSIVE_PROD_INSTANCE}
+PASSIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
+set_instance_stop_control_file_path ${PASSIVE_PROD_INSTANCE}
+PASSIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
+
+mkdir -p ${GENERATED_CONF_DIR}
+mkdir -p ${NGINX_CONF_ROOT}
+mkdir -p ${RUNTIME_BIN_DIR}
+
 export -f set_instance_name_from_dir
 export -f set_instance_start_control_file_path
 export -f set_instance_stop_control_file_path
