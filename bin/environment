@@ -47,28 +47,32 @@ NGINX_CONF_TEMPLATE_2=${ROOT}/templates/nginx.2.conf
 # to test and set each case so if something goes wonky
 # we get nothing set at all and fail in a big way
 if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_1}" ]; then
-  echo "instance1 is active"
+  echo "prod instance1 is active"
   NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_2}
   ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
   PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
 fi
 if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_2}" ]; then
-  echo "instance2 is active"
+  echo "prod instance2 is active"
   NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_1}
   ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
   PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
 fi
-set_instance_name_from_dir ${ACTIVE_PROD_INSTANCE}
-set_instance_start_control_file_path ${ACTIVE_PROD_INSTANCE}
-ACTIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
-set_instance_stop_control_file_path ${ACTIVE_PROD_INSTANCE}
-ACTIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
+# in the case of the active config not being set we want
+# to make sure and not attempt to set things
+if [ "${NGINX_ACTIVE_CONFIG}x" != "x" ]; then
+  set_instance_name_from_dir ${ACTIVE_PROD_INSTANCE}
+  set_instance_start_control_file_path ${ACTIVE_PROD_INSTANCE}
+  ACTIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
+  set_instance_stop_control_file_path ${ACTIVE_PROD_INSTANCE}
+  ACTIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
 
-set_instance_name_from_dir ${PASSIVE_PROD_INSTANCE}
-set_instance_start_control_file_path ${PASSIVE_PROD_INSTANCE}
-PASSIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
-set_instance_stop_control_file_path ${PASSIVE_PROD_INSTANCE}
-PASSIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
+  set_instance_name_from_dir ${PASSIVE_PROD_INSTANCE}
+  set_instance_start_control_file_path ${PASSIVE_PROD_INSTANCE}
+  PASSIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
+  set_instance_stop_control_file_path ${PASSIVE_PROD_INSTANCE}
+  PASSIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
+fi
 
 mkdir -p ${GENERATED_CONF_DIR}
 mkdir -p ${NGINX_CONF_ROOT}
@@ -78,3 +82,4 @@ export -f set_instance_name_from_dir
 export -f set_instance_start_control_file_path
 export -f set_instance_stop_control_file_path
 
+ENVIRONMENT_SOURCED=1

@@ -23,8 +23,8 @@ if [ $? == 100 ]; then
   ${ACTIVE_PROD_INSTANCE_STOP_CTL_FILE}
   update_repo_as_needed ${ACTIVE_PROD_INSTANCE}
   if [ $? != 100 ]; then
+    # check to see if our versions are mismatched
     echo "mismatched prod repo versions!"
-    exit 1
   fi
   #   start newly passive instance
   ${ACTIVE_PROD_INSTANCE_START_CTL_FILE}

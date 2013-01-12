@@ -1,6 +1,10 @@
 #! /usr/bin/env bash
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ${MY_DIR}/environment
+if [ "${ENVIRONMENT_SOURCED}x" = "x" ]; then
+  echo shitballs
+  source ${MY_DIR}/environment
+  echo hellfire
+fi
 
 while read instance_name
 do

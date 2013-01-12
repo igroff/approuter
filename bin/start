@@ -108,6 +108,7 @@ done < ${ALTERNATES_CONF}
 
 # create our nginx config and link up our active one
 $MY_DIR/gen_nginx_config
+
 # always start with number one
 # im not gonna force this one because the link should not exist
 ln -s ${NGINX_CONF_FILE_1} ${NGINX_CONF_LINK}
@@ -125,4 +126,4 @@ do
   echo "starting ${start_file}"
   ${start_file}
 done
-${MY_DIR}/status
+########${MY_DIR}/status
