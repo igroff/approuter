@@ -3,7 +3,7 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ "${ENVIRONMENT_SOURCED}x" = "x" ]; then
   source ${MY_DIR}/environment
 fi
-
+COOKIE_LOCATIONS=""
 while read instance_name
 do
     IFS=`printf "\t"`;
@@ -13,6 +13,7 @@ do
     PORT=${parts[2]}
     UPSTREAM_CONF_FILE=${NGINX_CONF_ROOT}/upstream_${TYPE}_${NAME}
     ROUTE_CONF_FILE=${NGINX_CONF_ROOT}/route_${TYPE}_${NAME}
+    ROUTING_COOKIE_NAME=${ALTERNATE_ROUTE_COOKIE_PREFIX}_${NAME}
     rm -f ${UPSTREAM_CONF_FILE}
     rm -f ${ROUTE_CONF_FILE}
     if [ $TYPE == "prod" ]; then
@@ -25,13 +26,27 @@ do
 
     # our alternates need to have their proxy route configs generated
     if [ $TYPE == "alternates" ]; then
-        echo "if (\$http_cookie ~* \"${ALTERNATE_ROUTE_COOKIE_PREFIX}_${NAME}\"){" >> ${ROUTE_CONF_FILE}
+        echo "if (\$http_cookie ~* \"${ROUTING_COOKIE_NAME}\"){" >> ${ROUTE_CONF_FILE}
         echo "  proxy_pass http://alternate_${NAME};" >> ${ROUTE_CONF_FILE}
         echo "}" >> ${ROUTE_CONF_FILE}
-    fi
 
+        # creating our alt cookie control locations so there is a convenient place to
+        # get the routing cookie set and removed
+        NEW_COOKIE_LOCATION="location = /alt_set_cookie_${NAME}.html {"
+        NEW_COOKIE_LOCATION="${NEW_COOKIE_LOCATION}  add_header Set-Cookie \"name=${ROUTING_COOKIE_NAME}; path=/; expiration=9999999999\"; return 200 \"Have a cookie!\";"
+        NEW_COOKIE_LOCATION="${NEW_COOKIE_LOCATION}}"
+        COOKIE_LOCATIONS="${COOKIE_LOCATIONS}${NEW_COOKIE_LOCATION}"
+    fi
 done < ${RUN_DATA_FILE}
 
-cat ${NGINX_CONF_TEMPLATE_1} | sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g  | sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_1}
-cat ${NGINX_CONF_TEMPLATE_2} | sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | sed -e s[{{log_dir}}[${LOG_DIR}[g  | sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_2}
+cat ${NGINX_CONF_TEMPLATE_1} | \
+  sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
+  sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
+  sed -e s[{{cookie_control_locations}}[${COOKIE_LOCATIONS}[g  | \
+  sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_1}
+cat ${NGINX_CONF_TEMPLATE_2} | \
+  sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
+  sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
+  sed -e s[{{cookie_control_locations}}[${COOKIE_LOCATIONS}[g  | \
+  sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_2}
 cp templates/mime.types ${NGINX_CONF_ROOT}
