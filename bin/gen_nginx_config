@@ -35,7 +35,11 @@ do
         NEW_COOKIE_LOCATION="location = /alt_set_cookie_${NAME}.html {"
         NEW_COOKIE_LOCATION="${NEW_COOKIE_LOCATION}  add_header Set-Cookie \"name=${ROUTING_COOKIE_NAME}; path=/; expiration=9999999999\"; return 200 \"Have a cookie!\";"
         NEW_COOKIE_LOCATION="${NEW_COOKIE_LOCATION}}"
-        COOKIE_LOCATIONS="${COOKIE_LOCATIONS}${NEW_COOKIE_LOCATION}"
+        REMOVE_COOKIE_LOCATION=`echo""`
+        REMOVE_COOKIE_LOCATION="${REMOVE_COOKIE_LOCATION}location = /alt_remove_cookie_${NAME}.html {"
+        REMOVE_COOKIE_LOCATION="${REMOVE_COOKIE_LOCATION}  add_header Set-Cookie \"name=${ROUTING_COOKIE_NAME}; path=/; expiration=0000000000\"; return 200 \"Gimme that cookie!\";"
+        REMOVE_COOKIE_LOCATION="${REMOVE_COOKIE_LOCATION}}"
+        COOKIE_LOCATIONS="${COOKIE_LOCATIONS}${NEW_COOKIE_LOCATION}${REMOVE_COOKIE_LOCATION}"
     fi
 done < ${RUN_DATA_FILE}
 
