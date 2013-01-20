@@ -29,16 +29,18 @@ do
     if [ $TYPE == "alternates" ]; then
         echo "if (\$http_cookie ~* \"${ROUTING_COOKIE_NAME}\"){" >> ${ROUTE_CONF_FILE}
         echo "  proxy_pass http://alternate_${NAME};" >> ${ROUTE_CONF_FILE}
+        echo "  add_header X-SERVED-BY-ALT ${NAME};" >> ${ROUTE_CONF_FILE}
         echo "}" >> ${ROUTE_CONF_FILE}
 
         # creating our alt cookie control locations so there is a convenient place to
         # get the routing cookie set and removed
         echo "location = /set_alt_cookie_${NAME}.html {" > ${COOKIE_CONF_FILE}
-        echo "  add_header Set-Cookie \"name=${ROUTING_COOKIE_NAME}; path=/; expiration=9999999999\";" >> ${COOKIE_CONF_FILE}
+        echo "  add_header Set-Cookie \"${ROUTING_COOKIE_NAME}=${NAME}; path=/; expires=9999999999;\";" >> ${COOKIE_CONF_FILE}
         echo "  return 200 \"Have a cookie!\";" >> ${COOKIE_CONF_FILE}
         echo "}" >> ${COOKIE_CONF_FILE}
         echo "location = /remove_alt_cookie_${NAME}.html {" >> ${COOKIE_CONF_FILE}
-        echo "  add_header Set-Cookie \"name=${ROUTING_COOKIE_NAME}; path=/; expiration=0000000000\";" >> ${COOKIE_CONF_FILE}
+        #echo "  add_header Set-Cookie \"${ROUTING_COOKIE_NAME}=${NAME}; path=/; expires=0000000001;\";" >> ${COOKIE_CONF_FILE}
+        echo "  add_header Set-Cookie \"${ROUTING_COOKIE_NAME}=${NAME}; path=/; Max-Age=0;\";" >> ${COOKIE_CONF_FILE}
         echo "  return 200 \"Gimme that cookie!\";" >> ${COOKIE_CONF_FILE}
         echo "}" >> ${COOKIE_CONF_FILE}
     fi
