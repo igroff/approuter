@@ -7,6 +7,7 @@ else
     echo "setting your environment up for you...."
     # capture how the path was before we started
     export PRE_APPROUTER_PATH=$PATH
+    export PRE_APPROUTER_MANPATH=$MANPATH
     export PRE_APPROUTER_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
     export PRE_APPROUTER_PS1=$PS1
 
@@ -17,6 +18,8 @@ else
     PATH=${ROOT}/usr/local/ssl/bin/:$PATH
     PATH=${ROOT}/sbin:$PATH
     PATH=${ROOT}/usr/sbin:$PATH
+
+    MANPATH=${ROOT}/usr/share/man/:$MANPATH
     PS1=\(ar\)$PS1
 
     function deactivate(){
@@ -29,8 +32,14 @@ else
         else
             unset LD_LIBRARY_PATH
         fi
+        if [ -n "$PRE_APPROUTER_MANPATH" ]; then
+            export MANPATH=$PRE_APPROUTER_MANPATH
+        else
+            unset MANPATH
+        fi
         unset PRE_APPROUTER_LD_LIBRARY_PATH
         unset PRE_APPROUTER_PATH
+        unset PRE_APPROUTER_MANPATH
         unset PRE_APPROUTER_PS1
         unset -f deactivate
     }
@@ -38,6 +47,7 @@ else
     export PATH
     export LD_LIBRARY_PATH
     export PS1
+    export MANPATH
     export -f deactivate
 fi
 

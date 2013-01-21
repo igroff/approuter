@@ -3,8 +3,10 @@ SHELL=/usr/bin/env bash
 
 BUILD_ROOT=$(CURDIR)/tmp
 PACKAGE_DIR=$(CURDIR)/packages
+MANAGED_ROOT=$(CURDIR)/managed
 INSTALL_LOCATION=$(CURDIR)/build_output
 INSTALL_BIN= ${INSTALL_LOCATION}/bin
+PERPD_ROOT=${INSTALL_LOCATION}/usr/sbin
 PERPD_EXECUTABLE=${INSTALL_LOCATION}/usr/sbin/perpd
 OPEN_SSL= ${INSTALL_LOCATION}/usr/local/ssl/bin/openssl
 OPEN_SSL_SOURCE= ${BUILD_ROOT}/openssl-1.0.1c 
@@ -35,6 +37,8 @@ ${LUAJIT}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 
 ${PERPD_EXECUTABLE}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 	cd ${BUILD_ROOT}/perp-2.07 && make -e DESTDIR=${INSTALL_LOCATION} install
+	export DESTDIR=${MANAGED_ROOT} && ${PERPD_ROOT}/perp-setup /etc/perpd ${MANAGED_ROOT}/var/run/perpd
+	sed -i -e s[/var/log/perpd[${MANAGED_ROOT}/var/log/perpd[g ${MANAGED_ROOT}/etc/perpd/.boot/rc.log
 
 ${INSTALL_LOCATION}:
 	mkdir -p ${INSTALL_LOCATION}
