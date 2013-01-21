@@ -16,8 +16,9 @@ else
     PATH=${HERE}/bin:${ROOT}/bin:$PATH
     PATH=${ROOT}/usr/local/ssl/bin/:$PATH
     PATH=${ROOT}/sbin:$PATH
+    PATH=${ROOT}/usr/sbin:$PATH
     PS1=\(ar\)$PS1
-    
+
     function deactivate(){
         export PATH=$PRE_APPROUTER_PATH
         export PS1=$PRE_APPROUTER_PS1
