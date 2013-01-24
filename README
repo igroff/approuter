@@ -42,7 +42,7 @@ etc/repo.conf
     the production and alternate locations, and ultimately run.
 
 etc/alternates.conf
-    A list of branches that will be run as alternates.  It is expected that the branches
+    A list of branche names that will be run as alternates.  It is expected that the branches
     referenced already exist.
 
 etc/starter.conf
@@ -50,3 +50,22 @@ etc/starter.conf
     the command will contain a {{port}} value which will be replaced with the port that
     the application is expected to start and listen on.  This port will be used to 
     route inbound http traffic to the application instance.
+
+Controls
+
+start / stop 
+    These two do what you'd expect, starting and stopping the instances managed by the
+    approuter along with nginx.
+
+switch_nginx_config
+    Toggles between the two running production instances, this switches out the configuration
+    and HUPs nginx to make the switch seemless for connected users.
+
+status
+    Displays information about nginx and th running instances (think ps)
+
+Usage
+    - Edit the repo.conf, alternates.conf and starter.conf files according to the information
+    given above.  
+    - source the environment file in the root 
+    - type start!
