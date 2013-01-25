@@ -129,7 +129,7 @@ printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK} -s quit" > ${RUNTIME_B
 
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
-echo "* 0 * * *   logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
+echo "0 * * * *   logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
 chmod +x ${RUNTIME_BIN_DIR}/*
 for start_file in ${RUNTIME_BIN_DIR}/start*; 
 do
