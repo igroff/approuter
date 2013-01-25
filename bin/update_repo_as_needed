@@ -42,17 +42,26 @@ if [ $ACTION == "help" ]; then
     echo "       provided the current directory is checked"
     echo "    test_only - indicates that the check to see if an update is available"
     echo "       should be performed, but no update should be done"
+    echo ""
+    echo "Actions:"
+    echo "    If the repo dir contains a file named update_repo_action which is"
+    echo "      executable, that file will be executed after an update of the "
+    echo "      contents of the repo dir.  That is: if new code is retrieved and an"
+    echo "      executeable file 'update_repo_action' exists in the root of the repo"
+    echo "      it will be executed."
     exit 1
 fi
 
 shift
 if [ "${REPO_DIR}x" == "x" ]; then
     REPO_DIR=$1
+    shift
 fi
 if [ "${REPO_DIR}x" == "x" ]; then
     # no dir provided, assume current directory
     REPO_DIR=`pwd`
 fi
+
 
 cd ${REPO_DIR}
 # want to get the full directory for our repo
@@ -66,7 +75,7 @@ if [ $? -ne 0 ]; then
 fi
 
 if [ $ACTION == "expand" ]; then
-    printf "* * * * *\t$0 $REPO_DIR"
+    printf "* * * * *\t$0 $REPO_DIR >> ~/repo_update.log 2>&1"
     exit 3
 fi
 
@@ -89,6 +98,10 @@ else
     if [ ! "$ACTION" == "test_only" ]; then
       log "deploying changes for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
       git reset --hard origin/${CURRENT_BRANCH}
+      # if we have a post update script, run it
+      if [ -x ${REPO_DIR}/update_repo_action ]; then
+        ${REPO_DIR}/update_repo_action
+      fi
     else
       log "changes detected for branch ${CURRENT_BRANCH} from ${ORIGIN_URL}"
     fi
