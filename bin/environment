@@ -23,8 +23,10 @@ ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
 ALTERNATE_ROUTE_COOKIE_PREFIX=arcp
 PROD_ROOT=${MANAGED_ROOT}/prod
 VAR_DIR=${MANAGED_ROOT}/var
+NGINX_CACHE_DIR=${VAR_DIR}/cache/nginx
 LOG_DIR=${VAR_DIR}/log
 RUN_DIR=${VAR_DIR}/run
+TEMP_DIR=${VAR_DIR}/temp
 RUNTIME_BIN_DIR=${VAR_DIR}/bin
 RUN_DATA_FILE=${VAR_DIR}/run_data
 REPO_CONF=${CONF_ROOT}/repo.conf
@@ -79,6 +81,8 @@ fi
 mkdir -p ${GENERATED_CONF_DIR}
 mkdir -p ${NGINX_CONF_ROOT}
 mkdir -p ${RUNTIME_BIN_DIR}
+mkdir -p ${NGINX_CACHE_DIR}
+mkdir -p ${TEMP_DIR}
 
 export -f set_instance_name_from_dir
 export -f set_instance_start_control_file_path
