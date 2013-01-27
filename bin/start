@@ -95,7 +95,7 @@ rm -f ${VAR_DIR}/run_data
 rm -f ${RUNTIME_BIN_DIR}/*
 rm -rf ${GENERATED_CONF_DIR}
 
-echo "SHELL=/usr/bin/bash" > ${VAR_DIR}/crontab
+echo "SHELL=/bin/bash" > ${VAR_DIR}/crontab
 echo "PATH=${BUILD_ROOT}/bin:${BUILD_ROOT}/usr/sbin:${BUILD_ROOT}/sbin:${BUILD_ROOT}/usr/bin" >> ${VAR_DIR}/crontab
 
 setup_managed_repositories;
