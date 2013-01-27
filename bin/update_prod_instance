@@ -6,7 +6,7 @@ source ${MY_DIR}/environment
 # our active and passive instances are all determined for us
 # in the environment 'include'
 # check for updates to passive instance
-update_repo_as_needed test_only ${PASSIVE_PROD_INSTANCE}
+${MY_DIR}/update_repo_as_needed test_only ${PASSIVE_PROD_INSTANCE}
 # if it has updates (update_repo_as_needed returns 100)
 if [ $? == 100 ]; then
   #   stop the instance 
