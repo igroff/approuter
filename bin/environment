@@ -17,6 +17,7 @@ function set_instance_stop_control_file_path(){
 
 ROOT=`pwd`
 MANAGED_ROOT=`pwd`/managed
+BUILD_ROOT=${ROOT}/build_output
 CONF_ROOT=${ROOT}/etc
 ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
 ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
