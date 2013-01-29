@@ -28,6 +28,7 @@ NGINX_CACHE_DIR=${VAR_DIR}/cache/nginx
 LOG_DIR=${VAR_DIR}/log
 RUN_DIR=${VAR_DIR}/run
 TEMP_DIR=${VAR_DIR}/temp
+PERP_BASE=${MANAGED_ROOT}/etc/perp
 RUNTIME_BIN_DIR=${VAR_DIR}/bin
 RUN_DATA_FILE=${VAR_DIR}/run_data
 REPO_CONF=${CONF_ROOT}/repo.conf
@@ -35,6 +36,7 @@ START_CMD_TEMPLATE=`cat ${CONF_ROOT}/starter.conf`
 GENERATED_CONF_DIR=${VAR_DIR}/conf
 LOGROTATE_CONF_TEMPLATE=${ROOT}/templates/logrotate.conf
 LOGROTATE_CONF=${GENERATED_CONF_DIR}/logrotate.conf
+TEMPLATE_DIR=${ROOT}/templates
 
 NGINX_PIDFILE=${RUN_DIR}/nginx.pid
 NGINX_CONF_ROOT=${GENERATED_CONF_DIR}/nginx
@@ -84,6 +86,7 @@ mkdir -p ${NGINX_CONF_ROOT}
 mkdir -p ${RUNTIME_BIN_DIR}
 mkdir -p ${NGINX_CACHE_DIR}
 mkdir -p ${TEMP_DIR}
+mkdir -p ${PERP_BASE}
 
 export -f set_instance_name_from_dir
 export -f set_instance_start_control_file_path

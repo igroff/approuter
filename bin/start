@@ -58,7 +58,6 @@ start_instance(){
     DIR_NAME=`basename $(dirname $1)`
     PORT=$2
     START_CMD=`echo "${START_CMD_TEMPLATE}" | sed -e s/{{port}}/${PORT}/g`
-    START_CMD="${START_CMD}"
     PIDFILE_NAME=${INSTANCE_NAME}_${2}.pid
     CTL_SFX=${INSTANCE_NAME}
     set_instance_start_control_file_path $1
@@ -75,6 +74,18 @@ start_instance(){
     echo "printf \"[ \$\? == 0 ] && rm ${RUN_DIR}/${PIDFILE_NAME}\" >> ${STOP_CTL_FILE}" >> ${START_CTL_FILE}
     echo "chmod +x ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${START_CTL_FILE}
     echo "popd > /dev/null 2>&1" >> ${START_CTL_FILE}
+
+
+    # create our perp control files, and directory structure
+    mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
+    cat ${TEMPLATE_DIR}/perp.rc.main | \
+      sed -e "s[{{start_cmd}}[${START_CMD}[g" |\
+      sed -e s[{{instance_dir}}[${1}[g  > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
+    cat ${TEMPLATE_DIR}/perp.rc.log | \
+      sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log
+
+    chmod +x ${PERP_BASE}/${INSTANCE_NAME}/rc.*
+    chmod +t ${PERP_BASE}/${INSTANCE_NAME}
 
     # keeping track of our running instance information so that we 
     # can build our nginx config

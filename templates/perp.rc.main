@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+if [ $1 == "start" ]; then
+  pushd {{instance_dir}} > /dev/null 2>&1
+  exec {{start_cmd}} 2>&1
+fi
