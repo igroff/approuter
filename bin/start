@@ -80,7 +80,7 @@ start_instance(){
     mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
     cat ${TEMPLATE_DIR}/perp.rc.main | \
       sed -e "s[{{start_cmd}}[${START_CMD}[g" |\
-      sed -e s[{{instance_dir}}[${1}[g  > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
+      sed -e s[{{change_to_dir}}[${1}[g  > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
     cat ${TEMPLATE_DIR}/perp.rc.log | \
       sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log
 
@@ -140,6 +140,18 @@ fi
 # write out nginx control files
 printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK}" > ${RUNTIME_BIN_DIR}/start_nginx
 printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK} -s quit" > ${RUNTIME_BIN_DIR}/stop_nginx
+# nginx for perps
+# create our perp control files, and directory structure
+mkdir -p ${PERP_BASE}/nginx
+cat ${TEMPLATE_DIR}/perp.rc.main | \
+  sed -e "s[{{start_cmd}}[nginx -c ${NGINX_CONF_LINK}[g" |\
+  sed -e s[{{change_to_dir}}[\.[g  > ${PERP_BASE}/nginx/rc.main
+cat ${TEMPLATE_DIR}/perp.rc.log | \
+  sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/nginx/rc.log
+
+chmod +x ${PERP_BASE}/nginx/rc.*
+# mark the perp service as being enabled
+chmod +t ${PERP_BASE}/nginx
 
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
