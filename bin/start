@@ -107,7 +107,7 @@ rm -f ${RUNTIME_BIN_DIR}/*
 rm -rf ${GENERATED_CONF_DIR}
 
 echo "SHELL=/bin/bash" > ${VAR_DIR}/crontab
-echo "PATH=${BUILD_ROOT}/bin:${BUILD_ROOT}/usr/sbin:${BUILD_ROOT}/sbin:${BUILD_ROOT}/usr/bin" >> ${VAR_DIR}/crontab
+echo "PATH=${BUILD_ROOT}/bin:${BUILD_ROOT}/usr/sbin:${BUILD_ROOT}/sbin:${BUILD_ROOT}/usr/bin:/bin/:/usr/bin" >> ${VAR_DIR}/crontab
 
 setup_managed_repositories;
 # start each of our application instances
@@ -116,7 +116,7 @@ start_instance ${MANAGED_ROOT}/prod/instance1 9001
 start_instance ${MANAGED_ROOT}/prod/instance2 9002
 
 # prod crontab, since it's a single entry and dose't vary
-echo "* * * * * ${MY_DIR}/update_prod_instance > ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
+echo "* * * * * cd ${ROOT} && ${MY_DIR}/update_prod_instance > ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
 # alternates we'll start at 9050
 PORT=9049
 while read alternate_name
