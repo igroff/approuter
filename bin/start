@@ -86,14 +86,6 @@ start_instance(){
     printf "${DIR_NAME}\t${INSTANCE_NAME}\t${PORT}\n" >> ${RUN_DATA_FILE}
 }
 
-for pidfile in ${RUN_DIR}/*; 
-do
-    if [ -f $pidfile ]; then
-        echo "looks like something may be running, fix that first"
-        exit 1
-    fi
-done;
-
 # cleanup our geneated files so we don't orphan anything and confuse people
 rm -f ${VAR_DIR}/crontab
 rm -f ${VAR_DIR}/run_data
@@ -132,8 +124,8 @@ if [ $? != 0 ]; then
 fi
 
 # write out nginx control files
-printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK}" > ${RUNTIME_BIN_DIR}/start_nginx
-printf "#! /usr/bin/env bash\nnginx -c ${NGINX_CONF_LINK} -s quit" > ${RUNTIME_BIN_DIR}/stop_nginx
+printf "#! /usr/bin/env bash\nperpctl u nginx" > ${RUNTIME_BIN_DIR}/start_nginx
+printf "#! /usr/bin/env bash\nperpctl d nginx" > ${RUNTIME_BIN_DIR}/stop_nginx
 # nginx for perps
 # create our perp control files, and directory structure
 mkdir -p ${PERP_BASE}/nginx
@@ -154,4 +146,9 @@ echo "0 * * * *   source ${ROOT}/environment && logrotate --state ${VAR_DIR}/log
 chmod +x ${RUNTIME_BIN_DIR}/*
 perpd ${PERP_BASE} > ${LOG_DIR}/perpd.log 2>&1 &
 echo $! > ${RUN_DIR}/perpd.pid
+for start_file in ${RUNTIME_BIN_DIR}/start*; 
+do
+  echo "starting ${start_file}"
+  ${start_file}
+done
 ${MY_DIR}/status
