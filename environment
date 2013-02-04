@@ -10,6 +10,7 @@ else
     export PRE_APPROUTER_MANPATH=$MANPATH
     export PRE_APPROUTER_LD_LIBRARY_PATH=$LD_LIBRARY_PATH
     export PRE_APPROUTER_PS1=$PS1
+    export PRE_APPROUTER_PERP_BASE=$PERP_BASE
 
     HERE=`pwd`
     ROOT=${HERE}/build_output
@@ -18,6 +19,8 @@ else
     PATH=${ROOT}/usr/local/ssl/bin/:$PATH
     PATH=${ROOT}/sbin:$PATH
     PATH=${ROOT}/usr/sbin:$PATH
+
+    PERP_BASE=${HERE}/managed/etc/perp
 
     MANPATH=${ROOT}/usr/share/man/:$MANPATH
     PS1=\(ar\)$PS1
@@ -37,6 +40,11 @@ else
         else
             unset MANPATH
         fi
+        if [ -n "$PRE_APPROUTER_PERP_BASE" ]; then
+            export PERP_BASE=$PRE_APPROUTER_PERP_BASE
+        else
+            unset PERP_BASE
+        fi
         unset PRE_APPROUTER_LD_LIBRARY_PATH
         unset PRE_APPROUTER_PATH
         unset PRE_APPROUTER_MANPATH
@@ -48,6 +56,7 @@ else
     export LD_LIBRARY_PATH
     export PS1
     export MANPATH
+    export PERP_BASE
     export -f deactivate
 fi
 
