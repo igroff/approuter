@@ -65,16 +65,10 @@ start_instance(){
 
     # write out control files for the instances we start
     echo "#! /usr/bin/env bash" > ${START_CTL_FILE}
-    echo "pushd $1 > /dev/null 2>&1" >> ${START_CTL_FILE}
-    echo "${START_CMD} > ${LOG_DIR}/${CTL_SFX}.log 2>&1 &" >> ${START_CTL_FILE}
-    echo "INSTANCE_PID=\$!"  >> ${RUNTIME_BIN_DIR}/start_${CTL_SFX}
-    echo "echo \${INSTANCE_PID} > ${RUN_DIR}/${PIDFILE_NAME}" >> ${START_CTL_FILE}
-    echo "printf '#! /usr/bin/env bash\nkill \$(' > ${STOP_CTL_FILE}" >> ${START_CTL_FILE}
-    echo "printf \"cat ${RUN_DIR}/${PIDFILE_NAME})\n\" >> ${STOP_CTL_FILE}" >> ${START_CTL_FILE}
-    echo "printf \"[ \$\? == 0 ] && rm ${RUN_DIR}/${PIDFILE_NAME}\" >> ${STOP_CTL_FILE}" >> ${START_CTL_FILE}
-    echo "chmod +x ${RUNTIME_BIN_DIR}/stop_${CTL_SFX}" >> ${START_CTL_FILE}
-    echo "popd > /dev/null 2>&1" >> ${START_CTL_FILE}
+    echo "perpctl -b ${PERP_BASE} u ${INSTANCE_NAME}" >> ${START_CTL_FILE}
 
+    echo "#! /usr/bin/env bash" > ${STOP_CTL_FILE}
+    echo "perpctl -b ${PERP_BASE} d ${INSTANCE_NAME}" >> ${STOP_CTL_FILE} 
 
     # create our perp control files, and directory structure
     mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
@@ -156,10 +150,8 @@ chmod +t ${PERP_BASE}/nginx
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
 echo "0 * * * *   source ${ROOT}/environment && logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
+
 chmod +x ${RUNTIME_BIN_DIR}/*
-for start_file in ${RUNTIME_BIN_DIR}/start*; 
-do
-  echo "starting ${start_file}"
-  ${start_file}
-done
-########${MY_DIR}/status
+perpd ${PERP_BASE} > ${LOG_DIR}/perpd.log 2>&1 &
+echo $! > ${RUN_DIR}/perpd.pid
+${MY_DIR}/status
