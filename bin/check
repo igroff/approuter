@@ -15,3 +15,7 @@ do
     echo ""
 
 done < ${RUN_DATA_FILE}
+
+echo "checking via nginx"
+curl http://localhost:8080
+echo ""
