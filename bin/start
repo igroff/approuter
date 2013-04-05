@@ -97,14 +97,14 @@ echo "PATH=${BUILD_ROOT}/bin:${BUILD_ROOT}/usr/sbin:${BUILD_ROOT}/sbin:${BUILD_R
 
 setup_managed_repositories;
 # start each of our application instances
-# prod ports will be 9001, 9002
-start_instance ${MANAGED_ROOT}/prod/instance1 9001
-start_instance ${MANAGED_ROOT}/prod/instance2 9002
+# prod ports will be 9051, 9052
+start_instance ${MANAGED_ROOT}/prod/instance1 9051
+start_instance ${MANAGED_ROOT}/prod/instance2 9052
 
 # prod crontab, since it's a single entry and dose't vary
 echo "* * * * * cd ${ROOT} && source ./environment && ${MY_DIR}/update_prod_instance > ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
-# alternates we'll start at 9050
-PORT=9049
+# alternates we'll start at 
+PORT=10051
 while read alternate_name
 do
     PORT=`echo "${PORT}+1" | bc`
