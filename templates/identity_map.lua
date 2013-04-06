@@ -18,27 +18,19 @@ function map_id(map_root_path, provided_id)
   end
 end
 
--- the idea is to provide the ability to translate an inbound id to another id if needed
--- we'll want to do this relatively infrequently as it requires file I/O to do so
--- so....
--- check the inbound request for X-ID-MAP
--- if X-ID-MAP exists, use it to set the ID
--- else
---    get the existing ID from UID cookie
---    transform ID to mapping path (<user id map storage root>/ID.map)
---    if file exists
---      load contents of file
---      set session cookie X-ID-MAP value to contents of file
---    else
---      set session cookie X-ID-MAP value to ID
+-- we have to ahave a cookie at all to do this, and without one the user
+-- can't be 'authenticated'
 local cookies = ngx.req.get_headers()["Cookie"]
 if not cookies then
   ngx.exit(ngx.HTTP_UNAUTHORIZED)
 end
 
+-- pick out any of our present identification values
 local uid = string.match(cookies, "UID=([^;]+);")
 local mapped_id = string.match(cookies, "XMAPPEDID=([^;]+);")
 
+-- we'll require that they have the base identification cookie even
+-- if they have the mapped id cookie
 if not uid then
   ngx.exit(ngx.HTTP_UNAUTHORIZED)
 end
