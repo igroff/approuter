@@ -60,4 +60,10 @@ cat ${NGINX_CONF_TEMPLATE_2} | \
   sed -e s[{{temp_dir}}[${TEMP_DIR}[g  | \
   sed -e s[{{storage_root}}[${STORAGE_ROOT}[g  | \
   sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_2}
+
+# if the user has not asked for proxy auth to be included
+if [ "${PROXY_AUTH}x" == "x" ]; then
+  # wanna drop the auth inclusion
+  sed -i "" -e '/access_by_lua_file/'D ${NGINX_CONF_FILE_1} ${NGINX_CONF_FILE_2}
+fi
 cp templates/mime.types ${NGINX_CONF_ROOT}
