@@ -92,6 +92,7 @@ start_instance(){
 # cleanup our geneated files so we don't orphan anything and confuse people
 rm -f ${VAR_DIR}/crontab
 rm -f ${VAR_DIR}/run_data
+rm -rf ${PERP_BASE}
 rm -f ${RUNTIME_BIN_DIR}/*
 rm -rf ${GENERATED_CONF_DIR}
 
