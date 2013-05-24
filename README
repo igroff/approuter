@@ -45,17 +45,19 @@ etc/alternates.conf
     A list of branche names that will be run as alternates.  It is expected that the branches
     referenced already exist.
 
-etc/starter.conf
-    The command that will be used to start the application instances.  It is expected that
-    the command will contain a {{port}} value which will be replaced with the port that
-    the application is expected to start and listen on.  This port will be used to 
-    route inbound http traffic to the application instance.
-
 Controls
 
 start / stop 
     These two do what you'd expect, starting and stopping the instances managed by the
     approuter along with nginx.
+
+    Applications must be startable using an executable file in the root of the application
+    named start, to which the first (and only) parameter passed will be the port to
+    which the application should bind for incoming requests. The application will be
+    started something like:
+   
+        pushd <app dir>
+        ./start 3882
 
 switch_nginx_config
     Toggles between the two running production instances, this switches out the configuration

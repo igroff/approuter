@@ -57,7 +57,10 @@ start_instance(){
     set_instance_name_from_dir $1
     DIR_NAME=`basename $(dirname $1)`
     PORT=$2
-    START_CMD=`echo "${START_CMD_TEMPLATE}" | sed -e s/{{port}}/${PORT}/g`
+    # everything must be able to be started with an executable named
+    # start in the root of the directory that takes the first parameter
+    # as the port on which it will listen
+    START_CMD="./start ${PORT}"
     PIDFILE_NAME=${INSTANCE_NAME}_${2}.pid
     CTL_SFX=${INSTANCE_NAME}
     set_instance_start_control_file_path $1
