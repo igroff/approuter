@@ -7,6 +7,9 @@ function map_id(map_root_path, provided_id)
        as a feature all whitespace will be stripped.
   --]]
   id_map_file_path = string.format("%s/%s.map", map_root_path, provided_id)
+  -- this is synchronous and blocking, if this is a problem we can 
+  -- replace this with an internal location and accessing it using
+  -- ngx.location.capture which is synchronous and NON blocking
   id_map_file = io.open(id_map_file_path, "r")
   if id_map_file then
     mapped_id = id_map_file:read("*a")
