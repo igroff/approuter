@@ -30,7 +30,12 @@ ${LUA}: ${LUAJIT}
 	cd ${INSTALL_BIN} && ln -s luajit lua
 
 ${NGINX}: ${LUAJIT} ${INSTALL_LOCATION} ${BUILD_ROOT} ${PERPD_EXECUTABLE}
-	cd ${BUILD_ROOT}/nginx/ && export LUAJIT_LIB=${LUAJIT_LIB} && ./configure  --with-mail --with-mail_ssl_module --with-http_ssl_module --prefix=${INSTALL_LOCATION} --add-module=${BUILD_ROOT}/ngx_devel_kit-0.2.17rc2 --add-module=${BUILD_ROOT}/lua-nginx-module --with-pcre=${BUILD_ROOT}/pcre-8.32
+	cd ${BUILD_ROOT}/nginx/ && export LUAJIT_LIB=${LUAJIT_LIB} && \
+	  ./configure  --with-mail --with-mail_ssl_module --with-http_ssl_module \
+	 	--prefix=${INSTALL_LOCATION} \
+		--add-module=${BUILD_ROOT}/ngx_devel_kit-0.2.17rc2 \
+		--add-module=${BUILD_ROOT}/lua-nginx-module \
+		--with-pcre=${BUILD_ROOT}/pcre-8.32
 	cd ${BUILD_ROOT}/nginx/ && make install
 
 ${LUAJIT}: ${INSTALL_LOCATION} ${BUILD_ROOT}
