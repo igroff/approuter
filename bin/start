@@ -40,7 +40,7 @@ setup_managed_repositories(){
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ${REPO_CONF}`
 
     # alternates
-    while read alternate 
+    while read alternate
     do
         echo "initializing alternate ${alternate}"
         ALTERNATE_DIR=${ALTERNATES_ROOT}/${alternate}
