@@ -54,16 +54,16 @@ NGINX_CONF_TEMPLATE_2=${ROOT}/templates/nginx.2.conf
 # to test and set each case so if something goes wonky
 # we get nothing set at all and fail in a big way
 if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_1}" ]; then
-  echo "prod instance1 is active"
   NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_2}
   ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
   PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
+  ACTIVE_PROD_INSTANCE_ID=instance1
 fi
 if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_2}" ]; then
-  echo "prod instance2 is active"
   NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_1}
   ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
   PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
+  ACTIVE_PROD_INSTANCE_ID=instance2
 fi
 # in the case of the active config not being set we want
 # to make sure and not attempt to set things
