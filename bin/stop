@@ -4,6 +4,9 @@ source $DIR/environment
 ACTION=$1
 if [ "$ACTION" == "flush" ]; then
   rm ${RUN_DIR}/*
+elif [ "$ACTION" == "prod" ]; then
+  perpctl d instance1
+  perpctl d instance2
 elif [ "$ACTION" == "perp" ]; then
   # we do expect to own the machine, so this is
   # reasonable

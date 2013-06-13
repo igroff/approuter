@@ -1,7 +1,15 @@
 #! /usr/bin/env bash
-
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
+
+ACTION=$1
+shift
+
+if [ "${ACTION}" == "prod" ]; then
+  perpctl u instance1
+  perpctl u instance2
+  exit 0
+fi
 
 mkdir -p ${LOG_DIR}
 mkdir -p ${RUN_DIR}
