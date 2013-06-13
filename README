@@ -45,23 +45,30 @@ etc/alternates.conf
     A list of branche names that will be run as alternates.  It is expected that the branches
     referenced already exist.
 
-Controls
+## AppRouter Controls
 
-start / stop 
-    These two do what you'd expect, starting and stopping the instances managed by the
-    approuter along with nginx.
-
+start
+    Starts up the approuter environment, including all the managed applications. 
     Applications must be startable using an executable file in the root of the application
     named start, to which the first (and only) parameter passed will be the port to
     which the application should bind for incoming requests. The application will be
     started something like:
-   
+
+    Once the environment is started, other controls become available
+
         pushd <app dir>
         ./start 3882
 
-switch_nginx_config
+shutdown
+    Shuts down the approuter environment in it's entirety, this will shutdown all the
+    managed instances, nginx, and the process monitor responsible for keeping things 
+    running.
+
+### Other Controls
+switch_nginx_config / switch
     Toggles between the two running production instances, this switches out the configuration
     and HUPs nginx to make the switch seemless for connected users.
+
 
 status
     Displays information about nginx and th running instances (think ps)

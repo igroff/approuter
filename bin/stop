@@ -2,7 +2,13 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/environment
 ACTION=$1
-if [ "$ACTION" == "flush" ]; then
+if [ "${ACTION}x" == "x" ]; then
+  for stop_ctl_file in ${RUNTIME_BIN_DIR}/stop*;
+  do
+    ${stop_ctl_file}
+  done
+  ${DIR}/status
+elif [ "$ACTION" == "flush" ]; then
   rm ${RUN_DIR}/*
 elif [ "$ACTION" == "prod" ]; then
   perpctl d instance1
@@ -12,9 +18,5 @@ elif [ "$ACTION" == "perp" ]; then
   # reasonable
   killall perpd
 else
-  for stop_ctl_file in ${RUNTIME_BIN_DIR}/stop*;
-  do
-    ${stop_ctl_file}
-  done
-  ${DIR}/status
+  perpctl d ${ACTION}
 fi

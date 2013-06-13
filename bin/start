@@ -5,10 +5,17 @@ source ${MY_DIR}/environment
 ACTION=$1
 shift
 
-if [ "${ACTION}" == "prod" ]; then
-  perpctl u instance1
-  perpctl u instance2
-  exit 0
+if [ "${ACTION}x" != "x" ]; then 
+  # start can be passed the name of the service to start, or a convience indicator
+  # like 'prod'
+  if [ "${ACTION}" == "prod" ]; then
+    perpctl u instance1
+    perpctl u instance2
+    exit 0
+  else
+    perpctl u ${ACTION}
+    exit $?
+  fi
 fi
 
 mkdir -p ${LOG_DIR}
