@@ -4,7 +4,6 @@
 if [ -n "$PRE_APPROUTER_PATH" ]; then
     echo "looks like we're already set... ignoring your request"
 else
-    echo "setting your environment up for you...."
     # capture how the path was before we started
     export PRE_APPROUTER_PATH=$PATH
     export PRE_APPROUTER_MANPATH=$MANPATH
