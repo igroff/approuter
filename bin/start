@@ -116,7 +116,7 @@ start_instance ${MANAGED_ROOT}/prod/instance1 9051
 start_instance ${MANAGED_ROOT}/prod/instance2 9052
 
 # prod crontab, since it's a single entry and dose't vary
-echo "* * * * * cd ${ROOT} && source ./environment && ${MY_DIR}/update_prod_instance > ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
+echo "* * * * * cd ${ROOT} && source ./environment && ${MY_DIR}/update_prod_instance >> ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
 # alternates we'll start at 
 PORT=10051
 while read alternate_name
