@@ -38,6 +38,16 @@ setup_managed_repositories(){
     # two prod instances so we can roll
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance1 `cat ${REPO_CONF}`
     clone_repo_as_needed ${MANAGED_ROOT}/prod/instance2 `cat ${REPO_CONF}`
+    # switch production branches if specified
+    if [ -f ${PROD_BRANCH_CONF} ]; then
+      PROD_BRANCH_NAME=`cat ${PROD_BRANCH_CONF}`
+      pushd ${MANAGED_ROOT}/prod/instance1
+      git checkout -b ${PROD_BRANCH_NAME} origin/${PROD_BRANCH_NAME}
+      popd
+      pushd ${MANAGED_ROOT}/prod/instance2
+      git checkout -b ${PROD_BRANCH_NAME} origin/${PROD_BRANCH_NAME}
+      popd
+    fi
 
     # alternates
     while read alternate

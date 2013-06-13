@@ -19,6 +19,7 @@ ROOT=`pwd`
 MANAGED_ROOT=`pwd`/managed
 BUILD_ROOT=${ROOT}/build_output
 CONF_ROOT=${ROOT}/etc
+PROD_BRANCH_CONF=${CONF_ROOT}/prod_branch
 ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
 ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
 ALTERNATE_ROUTE_COOKIE_PREFIX=arcp
