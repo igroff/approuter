@@ -11,11 +11,11 @@ do
     NAME=${parts[1]}
     PORT=${parts[2]}
     echo checking ${NAME} on ${PORT}
-    curl http://localhost:${PORT}
+    curl http://localhost:${PORT}/diagnostic
     echo ""
 
 done < ${RUN_DATA_FILE}
 
 echo "checking via nginx"
-curl http://localhost:8080
+curl http://localhost:${NGINX_PORT}/diagnostic
 echo ""

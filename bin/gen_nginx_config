@@ -51,6 +51,7 @@ cat ${NGINX_CONF_TEMPLATE_1} | \
   sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
   sed -e s[{{cache_dir}}[${CACHE_DIR}[g  | \
   sed -e s[{{temp_dir}}[${TEMP_DIR}[g  | \
+  sed -e s[{{listen_port}}[${NGINX_PORT}[g  | \
   sed -e s[{{storage_root}}[${STORAGE_ROOT}[g  | \
   sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_1}
 cat ${NGINX_CONF_TEMPLATE_2} | \
@@ -58,6 +59,7 @@ cat ${NGINX_CONF_TEMPLATE_2} | \
   sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
   sed -e s[{{cache_dir}}[${CACHE_DIR}[g  | \
   sed -e s[{{temp_dir}}[${TEMP_DIR}[g  | \
+  sed -e s[{{listen_port}}[${NGINX_PORT}[g  | \
   sed -e s[{{storage_root}}[${STORAGE_ROOT}[g  | \
   sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_2}
 

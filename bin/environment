@@ -44,6 +44,7 @@ NGINX_CONF_LINK=${GENERATED_CONF_DIR}/nginx/nginx.conf
 NGINX_ACTIVE_CONFIG=`readlink ${NGINX_CONF_LINK}`
 NGINX_CONF_FILE_1=${GENERATED_CONF_DIR}/nginx/nginx.1.conf
 NGINX_CONF_FILE_2=${GENERATED_CONF_DIR}/nginx/nginx.2.conf
+NGINX_PORT=9090
 # we roll between 2 production instances so we have
 # one config for each
 NGINX_CONF_TEMPLATE_1=${ROOT}/templates/nginx.1.conf
