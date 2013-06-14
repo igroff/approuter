@@ -94,6 +94,8 @@ shutdown
 status
     Displays information about nginx and th running instances (think ps), something
     like this ( the second column is the service name and is used with other commands):
+
+
         [+ +++ +++]  beta       uptime: 159s/323s  pids: 35930/34714
         [+ +++ +++]  gamma      uptime: 323s/323s  pids: 34717/34716
         [+ +++ +++]  instance1  uptime: 323s/323s  pids: 34719/34718
@@ -129,5 +131,19 @@ should return a 200 under normal operating conditions.
 - As described in the section on 'start' the application must have an executable file
 in it's root directory called 'start' that accepts a single parameter indicating the
 port to which the application should bind to listen for incoming requests.
+
+## Application Instance Routing
+  Routing amongst instances managed by approuter is controlled by the presence of specific 
+  cookies.  In the absence of an alternate routing cookie, the active production instance
+  will serve the request.  To facilitate the setting of routing cookies, alternate specific
+  urls are created as follows:
+
+    http://approuter.host.com/set_alt_cookie_<alternate name>.html
+    http://approuter.host.com/remove_alt_cookie_<alternate name>.html
+
+    
+    e.g.
+    http://approuter.host.com/set_alt_cookie_gamma.html
+    http://approuter.host.com/remove_alt_cookie_gamma.html
 
 
