@@ -1,4 +1,4 @@
-This thing is designed to manage multiple versions of an application 
+This thing is intended to manage multiple versions of an application 
 running simultaneously.  It will manage two types of running applications:
 production and alternate.  
 
