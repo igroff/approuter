@@ -40,8 +40,8 @@ clone_repo_as_needed() {
     else
         printf "repo found at $1, not cloning\n"
     fi
-    # we'll be writing out our updater entires to a crontab
     # for our alternates.  the prod updater is a constant and
+    # we'll be writing out our updater entires to a crontab
     # doesn't vary so we handle it elsewhere as a static entry
     if [ "`basename ${PARENT_PATH}`" = "alternates" ]; then
       echo "* * * * * ${MY_DIR}/restart_if_changed $1 > ${LOG_DIR}/restart_${DIRNAME}.log 2>&1" >> ${VAR_DIR}/crontab
@@ -63,6 +63,14 @@ setup_managed_repositories(){
       git checkout -b ${PROD_BRANCH_NAME} origin/${PROD_BRANCH_NAME}
       popd
     fi
+    
+    # we want to get the name of our prod branch so we can use it to
+    # determine where our environment settings will be stored (if there are
+    # any).  Both prod instances will be on the same branch, or there's a problem
+    pushd ${MANAGED_ROOT}/prod/instance1
+    set_directory_branch_name
+    PROD_BRANCH_NAME=${DIR_BRANCH_NAME}
+    popd
 
     # alternates
     while read alternate
@@ -91,6 +99,18 @@ start_instance(){
     set_instance_start_control_file_path $1
     set_instance_stop_control_file_path $1
 
+    #  if we're using an environment repo, or settings file will be found like
+    #  the following ( within the environment repo )
+    #  for prod:
+    #     <repo name>/<prod branch>.env
+    #  for the alternates:
+    #     <repo name>/<prod branch>-<alt branch>.env
+    if [ ("${INSTANCE_NAME}" == "instance1") -o ("${INSTANCE_NAME}" == "instance2" ]; then
+      ENV_SETTINGS_FILE="${ENV_SETTINGS_REPO_DIR}/${REPOSTIORY_NAME}/${PROD_BRANCH_NAME}.env"
+    else
+      ENV_SETTINGS_FILE="${ENV_SETTINGS_REPO_DIR}/${REPOSTIORY_NAME}/${PROD_BRANCH_NAME}-${INSTANCE_NAME}.env"
+    fi
+
     # write out control files for the instances we start
     echo "#! /usr/bin/env bash" > ${START_CTL_FILE}
     echo "perpctl -b ${PERP_BASE} u ${INSTANCE_NAME}" >> ${START_CTL_FILE}
@@ -102,6 +122,7 @@ start_instance(){
     mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
     cat ${TEMPLATE_DIR}/perp.rc.main | \
       sed -e "s[{{start_cmd}}[${START_CMD}[g" |\
+      sed -e "s[{{env_settings_file}}[${ENV_SETTINGS_FILE}[g" |\
       sed -e s[{{change_to_dir}}[${1}[g  > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
     cat ${TEMPLATE_DIR}/perp.rc.log | \
       sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log
@@ -120,6 +141,20 @@ rm -f ${VAR_DIR}/run_data
 rm -rf ${PERP_BASE}
 rm -f ${RUNTIME_BIN_DIR}/*
 rm -rf ${GENERATED_CONF_DIR}
+[ -d ${ENV_SETTINGS_REPO_DIR} ] && rm -rf ${ENV_SETTINGS_REPO_DIR}
+
+REPOSITORY_URL=`cat ${REPO_CONF}`
+REPOSITORY_NAME=`basename ${REPOSITORY_URL} | sed -e 's[\.git[[g'1
+if [ -f ${ENV_SETTINGS_REPO_CONF} ]; then
+  ENV_SETTINGS_REPO_URL=`cat ${ENV_SETTINGS_REPO_CONF}`
+fi
+
+# environment settings repo is optional, if we have one we will use it
+if [ -n "${ENV_SETTINGS_REPO_URL}" ]; then
+  pushd ${MANAGED_ROOT}
+  git clone ${ENV_SETTINGS_REPO_URL} ${ENV_SETTINGS_REPO_DIR}
+  popd
+fi
 
 echo "SHELL=/bin/bash" > ${VAR_DIR}/crontab
 echo "PATH=${BUILD_ROOT}/bin:${BUILD_ROOT}/usr/sbin:${BUILD_ROOT}/sbin:${BUILD_ROOT}/usr/bin:/bin/:/usr/bin" >> ${VAR_DIR}/crontab
@@ -130,7 +165,7 @@ setup_managed_repositories;
 start_instance ${MANAGED_ROOT}/prod/instance1 9051
 start_instance ${MANAGED_ROOT}/prod/instance2 9052
 
-# prod crontab, since it's a single entry and dose't vary
+# prod crontab, since it's a single entry and dosen't vary
 echo "* * * * * cd ${ROOT} && source ./environment && ${MY_DIR}/update_prod_instance >> ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
 # alternates we'll start at 
 PORT=10051

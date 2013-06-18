@@ -1,5 +1,10 @@
 #! /usr/bin/env bash
 if [ $1 == "start" ]; then
+  # if we have an environment settings file we'll use it to configure
+  # our environment
+  if [ -n "{{env_settings_file}}" ]; then
+    [ -f {{env_settings_file}} ] && source {{env_settings_file}}
+  fi
   pushd {{change_to_dir}} > /dev/null 2>&1
   exec {{start_cmd}} 2>&1
 fi

@@ -15,6 +15,10 @@ function set_instance_stop_control_file_path(){
   STOP_CTL_FILE=${RUNTIME_BIN_DIR}/stop_${INSTANCE_NAME}
 }
 
+function set_directory_branch_name(){
+  DIR_BRANCH_NAME=`git rev-parse --symbolic-full-name --abbrev-ref HEAD`
+}
+
 ROOT=`pwd`
 MANAGED_ROOT=`pwd`/managed
 BUILD_ROOT=${ROOT}/build_output
@@ -25,6 +29,7 @@ ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
 ALTERNATE_ROUTE_COOKIE_PREFIX=arcp
 PROD_ROOT=${MANAGED_ROOT}/prod
 VAR_DIR=${MANAGED_ROOT}/var
+ENV_SETTINGS_REPO_DIR=${MANAGED_ROOT}/env-settings
 NGINX_CACHE_DIR=${VAR_DIR}/cache/nginx
 LOG_DIR=${VAR_DIR}/log
 RUN_DIR=${VAR_DIR}/run
@@ -33,6 +38,7 @@ PERP_BASE=${MANAGED_ROOT}/etc/perp
 RUNTIME_BIN_DIR=${VAR_DIR}/bin
 RUN_DATA_FILE=${VAR_DIR}/run_data
 REPO_CONF=${CONF_ROOT}/repo.conf
+ENV_SETTINGS_REPO_CONF=${CONF_ROOT}/env_repo.conf
 GENERATED_CONF_DIR=${VAR_DIR}/conf
 LOGROTATE_CONF_TEMPLATE=${ROOT}/templates/logrotate.conf
 LOGROTATE_CONF=${GENERATED_CONF_DIR}/logrotate.conf
