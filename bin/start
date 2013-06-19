@@ -105,10 +105,10 @@ start_instance(){
     #     <repo name>/<prod branch>.env
     #  for the alternates:
     #     <repo name>/<prod branch>-<alt branch>.env
-    if [ ("${INSTANCE_NAME}" == "instance1") -o ("${INSTANCE_NAME}" == "instance2" ]; then
-      ENV_SETTINGS_FILE="${ENV_SETTINGS_REPO_DIR}/${REPOSTIORY_NAME}/${PROD_BRANCH_NAME}.env"
+    if [ "${INSTANCE_NAME}" == "instance1" -o "${INSTANCE_NAME}" == "instance2" ]; then
+      ENV_SETTINGS_FILE="${ENV_SETTINGS_REPO_DIR}/${REPOSITORY_NAME}/${PROD_BRANCH_NAME}.env"
     else
-      ENV_SETTINGS_FILE="${ENV_SETTINGS_REPO_DIR}/${REPOSTIORY_NAME}/${PROD_BRANCH_NAME}-${INSTANCE_NAME}.env"
+      ENV_SETTINGS_FILE="${ENV_SETTINGS_REPO_DIR}/${REPOSITORY_NAME}/${PROD_BRANCH_NAME}-${INSTANCE_NAME}.env"
     fi
 
     # write out control files for the instances we start
@@ -144,7 +144,7 @@ rm -rf ${GENERATED_CONF_DIR}
 [ -d ${ENV_SETTINGS_REPO_DIR} ] && rm -rf ${ENV_SETTINGS_REPO_DIR}
 
 REPOSITORY_URL=`cat ${REPO_CONF}`
-REPOSITORY_NAME=`basename ${REPOSITORY_URL} | sed -e 's[\.git[[g'1
+REPOSITORY_NAME=`basename ${REPOSITORY_URL} | sed -e 's[\.git[[g'`
 if [ -f ${ENV_SETTINGS_REPO_CONF} ]; then
   ENV_SETTINGS_REPO_URL=`cat ${ENV_SETTINGS_REPO_CONF}`
 fi
