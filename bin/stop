@@ -11,12 +11,12 @@ if [ "${ACTION}x" == "x" ]; then
 elif [ "$ACTION" == "flush" ]; then
   rm ${RUN_DIR}/*
 elif [ "$ACTION" == "prod" ]; then
-  perpctl d instance1
-  perpctl d instance2
+  perpctl D instance1
+  perpctl D instance2
 elif [ "$ACTION" == "perp" ]; then
   # we do expect to own the machine, so this is
   # reasonable
   killall perpd
 else
-  perpctl d ${ACTION}
+  perpctl D ${ACTION}
 fi

@@ -9,11 +9,11 @@ if [ "${ACTION}x" != "x" ]; then
   # start can be passed the name of the service to start, or a convience indicator
   # like 'prod'
   if [ "${ACTION}" == "prod" ]; then
-    perpctl u instance1
-    perpctl u instance2
+    perpctl U instance1
+    perpctl U instance2
     exit 0
   else
-    perpctl u ${ACTION}
+    perpctl U ${ACTION}
     exit $?
   fi
 fi
@@ -113,10 +113,10 @@ start_instance(){
 
     # write out control files for the instances we start
     echo "#! /usr/bin/env bash" > ${START_CTL_FILE}
-    echo "perpctl -b ${PERP_BASE} u ${INSTANCE_NAME}" >> ${START_CTL_FILE}
+    echo "perpctl -b ${PERP_BASE} U ${INSTANCE_NAME}" >> ${START_CTL_FILE}
 
     echo "#! /usr/bin/env bash" > ${STOP_CTL_FILE}
-    echo "perpctl -b ${PERP_BASE} d ${INSTANCE_NAME}" >> ${STOP_CTL_FILE} 
+    echo "perpctl -b ${PERP_BASE} D ${INSTANCE_NAME}" >> ${STOP_CTL_FILE} 
 
     # create our perp control files, and directory structure
     mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
@@ -188,8 +188,8 @@ if [ $? != 0 ]; then
 fi
 
 # write out nginx control files
-printf "#! /usr/bin/env bash\nperpctl u nginx" > ${RUNTIME_BIN_DIR}/start_nginx
-printf "#! /usr/bin/env bash\nperpctl d nginx" > ${RUNTIME_BIN_DIR}/stop_nginx
+printf "#! /usr/bin/env bash\nperpctl U nginx" > ${RUNTIME_BIN_DIR}/start_nginx
+printf "#! /usr/bin/env bash\nperpctl D nginx" > ${RUNTIME_BIN_DIR}/stop_nginx
 # nginx for perps
 # create our perp control files, and directory structure
 mkdir -p ${PERP_BASE}/nginx

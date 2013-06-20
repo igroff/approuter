@@ -6,8 +6,8 @@ if [ $1 == "start" ]; then
   if [ -n "{{env_settings_file}}" ]; then
     [ -f {{env_settings_file}} ] && source {{env_settings_file}}
   fi
-  pushd {{change_to_dir}} > /dev/null 2>&1
+  pushd {{change_to_dir}} > /dev/null
   exec {{start_cmd}}
 else
-  echo "`pwd`\perp.rc.main $@"
+  echo "perp.rc.main $@"
 fi

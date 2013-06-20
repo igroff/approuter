@@ -1,6 +1,8 @@
 #!/bin/sh
 if test ${1} = 'start' ; then
   exec tinylog -k 5 -t {{log_dir}}/${2}
+else
+  echo "perp.rc.log ${@}"
 fi
 
 exit 0
