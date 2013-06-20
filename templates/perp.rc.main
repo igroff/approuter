@@ -4,6 +4,7 @@ if [ $1 == "start" ]; then
   # if we have an environment settings file we'll use it to configure
   # our environment
   if [ -n "{{env_settings_file}}" ]; then
+    echo "using environment settings from : {{env_settings_file}}"
     [ -f {{env_settings_file}} ] && source {{env_settings_file}}
   fi
   pushd {{change_to_dir}} > /dev/null
