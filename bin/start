@@ -141,7 +141,6 @@ rm -f ${VAR_DIR}/run_data
 rm -rf ${PERP_BASE}
 rm -f ${RUNTIME_BIN_DIR}/*
 rm -rf ${GENERATED_CONF_DIR}
-[ -d ${ENV_SETTINGS_REPO_DIR} ] && rm -rf ${ENV_SETTINGS_REPO_DIR}
 
 REPOSITORY_URL=`cat ${REPO_CONF}`
 REPOSITORY_NAME=`basename ${REPOSITORY_URL} | sed -e 's[\.git[[g'`
@@ -152,7 +151,14 @@ fi
 # environment settings repo is optional, if we have one we will use it
 if [ -n "${ENV_SETTINGS_REPO_URL}" ]; then
   pushd ${MANAGED_ROOT}
-  git clone ${ENV_SETTINGS_REPO_URL} ${ENV_SETTINGS_REPO_DIR}
+  if [ ! -d ${ENV_SETTINGS_REPO_DIR} ]; then
+    git clone ${ENV_SETTINGS_REPO_URL} ${ENV_SETTINGS_REPO_DIR}
+  else
+    pushd ${ENV_SETTINGS_REPO_DIR}
+    git pull
+    git reset --hard origin/master
+    popd
+  fi
   popd
 fi
 
@@ -190,7 +196,7 @@ fi
 # write out nginx control files
 printf "#! /usr/bin/env bash\nperpctl U nginx" > ${RUNTIME_BIN_DIR}/start_nginx
 printf "#! /usr/bin/env bash\nperpctl D nginx" > ${RUNTIME_BIN_DIR}/stop_nginx
-# nginx for perps
+# nginx for perpd
 # create our perp control files, and directory structure
 mkdir -p ${PERP_BASE}/nginx
 cat ${TEMPLATE_DIR}/perp.rc.main | \
@@ -214,4 +220,8 @@ do
   echo "starting ${start_file}"
   ${start_file}
 done
+if [ "${NO_CRONTAB_INSTALL}x" == "x" ]; then
+  echo "installing crontab, just so you know..."
+  crontab ${VAR_DIR}/crontab
+fi
 ${MY_DIR}/status
