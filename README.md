@@ -75,7 +75,7 @@ start
         pushd <app dir>
         ./start 3882
 
-    The start executabls should perform all necessary steps to setup the environment
+    The start executable should perform all necessary steps to setup the environment
     and get the application running.
 
     Once the environment is started, other controls become available
@@ -86,8 +86,8 @@ shutdown
     running.
 
 ### Other Controls
-- **status** - Displays information about nginx and th running instances (think ps), something
-    like this ( the second column is the service name and is used with other commands):
+- **status** - Displays information about nginx and the running instances (think ps), something
+    like this ( the second column is the service name which is used with other commands):
 
 
         [+ +++ +++]  beta       uptime: 159s/323s  pids: 35930/34714
