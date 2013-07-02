@@ -170,5 +170,11 @@ To support the identification of users there are a couple utility (API)
 endpoints made available to assist in the creation and managemnt of
 cookies and such to identify users.
 
-- `/idm/create_id`
+- `/idm/create_id` Creates a new random ID for a users and sets the
+cookie appropriately to assing that value to the user.
+
+- `/idm/map_value_to/<id>` Maps a new value to the ID provided by the
+User Identity Cookie of the current request.  This is used to change the
+identifying token for a user to something new (as in changing a
+password).
 
