@@ -9,7 +9,7 @@ function map_id(map_root_path, provided_id)
   id_map_file_path = string.format("%s/%s.map", map_root_path, provided_id)
   -- this is synchronous and blocking, if this is a problem we can 
   -- replace this with an internal location and accessing it using
-  -- ngx.location.capture which is synchronous and NON blocking
+  -- ngx.location.capture which is asynchronous and NON blocking
   id_map_file = io.open(id_map_file_path, "r")
   if id_map_file then
     mapped_id = id_map_file:read("*a")
@@ -21,7 +21,7 @@ function map_id(map_root_path, provided_id)
   end
 end
 
--- we have to ahave a cookie at all to do this, and without one the user
+-- we have to have a cookie at all to do this, and without one the user
 -- can't be 'authenticated'
 local cookies = ngx.req.get_headers()["Cookie"]
 if not cookies then
