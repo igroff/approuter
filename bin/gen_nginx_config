@@ -62,7 +62,8 @@ cat ${NGINX_CONF_TEMPLATE_2} | \
   sed -e s[{{listen_port}}[${NGINX_PORT}[g  | \
   sed -e s[{{storage_root}}[${STORAGE_ROOT}[g  | \
   sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_2}
-
+# move our access_by_lua_file file into the appropriate place
+cp ${TEMPLATE_DIR}/identity_map.lua ${BUILD_ROOT}
 # if the user has not asked for proxy auth to be included
 if [ "${PROXY_AUTH}x" == "x" ]; then
   # wanna drop the auth inclusion
