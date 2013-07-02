@@ -151,7 +151,14 @@ provide some basic configuration data as follows:
 
 **PROXY_AUTH** - set to any non empty string value to enable identity
 managment.
+
 **ID_MAP_ROOT** - provides the location on disk where the identity
 mapping information is stored.  This should be an existing directory
 which may contain identity mapping files.
+
+**USER_ID_COOKIE** - this is the name of the cookie that will be used to
+identify the user.  That is, this is the cookie that will be expected to
+be on any inbound request to identify the user, if Identity Managment is
+enabled, this cookie will be required.  Inbound requests that do not
+contain this cookie (and value) will result in a 401.
 
