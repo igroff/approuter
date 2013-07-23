@@ -53,6 +53,7 @@ cat ${NGINX_CONF_TEMPLATE_1} | \
   sed -e s[{{temp_dir}}[${TEMP_DIR}[g  | \
   sed -e s[{{listen_port}}[${NGINX_PORT}[g  | \
   sed -e s[{{storage_root}}[${ID_MAP_ROOT}[g  | \
+  sed -e s[{{etc_dir}}[${CONF_ROOT}[g  | \
   sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_1}
 cat ${NGINX_CONF_TEMPLATE_2} | \
   sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
@@ -61,6 +62,7 @@ cat ${NGINX_CONF_TEMPLATE_2} | \
   sed -e s[{{temp_dir}}[${TEMP_DIR}[g  | \
   sed -e s[{{listen_port}}[${NGINX_PORT}[g  | \
   sed -e s[{{storage_root}}[${ID_MAP_ROOT}[g  | \
+  sed -e s[{{etc_dir}}[${CONF_ROOT}[g  | \
   sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE_2}
 # move our access_by_lua_file file into the appropriate place
 cp ${TEMPLATE_DIR}/identity_map.lua ${BUILD_ROOT}
