@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+TIMEOUT=10
+CHECK_INTERVAL=1
+RUN_TIME=0
+PERP_BASE=${1-perp_base}
+SECONDS_TO_WAIT=${2-seconds_to_wait}
+INSTANCE_NAME=${3-instance_name}
+perpok -b ${PERP_BASE} -u ${SECONDS_TO_WAIT} ${INSTANCE_NAME};
+OK_TEST=$?
+while [ ${OK_TEST} != 0 ]; do
+  if [ ${RUN_TIME} -gt ${TIMEOUT} ]; then
+    exit ${OK_TEST};
+  fi
+  sleep ${CHECK_INTERVAL};
+  RUN_TIME=`echo "${RUN_TIME}+${CHECK_INTERVAL}" | bc`
+  perpok -b ${PERP_BASE} -u ${SECONDS_TO_WAIT} ${INSTANCE_NAME};
+  OK_TEST=$?
+done

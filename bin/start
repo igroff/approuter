@@ -118,6 +118,13 @@ start_instance(){
     echo "#! /usr/bin/env bash" > ${STOP_CTL_FILE}
     echo "perpctl -b ${PERP_BASE} D ${INSTANCE_NAME}" >> ${STOP_CTL_FILE} 
 
+    # this is the file we can call to block until the requested instance is
+    # running and healthy, or times out
+    cat ${TEMPLATE_DIR}/wait_for_service| \
+      sed -e "s[\${1-perp_base}[${PERP_BASE}[g" |\
+      sed -e "s[\${2-seconds_to_wait}[3[g" |\
+      sed -e "s[\${3-instance_name}[${INSTANCE_NAME}[g"  > ${WAIT_FOR_START_FILE}
+
     # create our perp control files, and directory structure
     mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
     cat ${TEMPLATE_DIR}/perp.rc.main | \

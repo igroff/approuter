@@ -8,6 +8,10 @@ function set_instance_name_from_dir(){
 function set_instance_start_control_file_path(){
   INSTANCE_PATH=$1
   START_CTL_FILE=${RUNTIME_BIN_DIR}/start_${INSTANCE_NAME}
+  # this is the name of a helper file that can be called and will
+  # block until the requested instance is running, or will timeout 
+  # after some defined interval
+  WAIT_FOR_START_FILE=${RUNTIME_BIN_DIR}/wait_for_${INSTANCE_NAME}
 }
 
 function set_instance_stop_control_file_path(){
