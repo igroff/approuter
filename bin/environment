@@ -25,9 +25,11 @@ function set_directory_branch_name(){
 
 ROOT=`pwd`
 MANAGED_ROOT=`pwd`/managed
+APPROUTER_BIN_DIR=${ROOT}/bin
 BUILD_ROOT=${ROOT}/build_output
 CONF_ROOT=${ROOT}/etc
 PROD_BRANCH_CONF=${CONF_ROOT}/prod_branch
+HEALTH_CHECK_URL_CONF=${CONF_ROOT}/health_check
 ALTERNATES_ROOT=${MANAGED_ROOT}/alternates
 ALTERNATES_CONF=${CONF_ROOT}/alternates.conf
 ALTERNATE_ROUTE_COOKIE_PREFIX=arcp
@@ -69,12 +71,18 @@ if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_1}" ]; then
   ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
   PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
   ACTIVE_PROD_INSTANCE_ID=instance1
+  PASSIVE_PROD_INSTANCE_ID=instance2
+  ACTIVE_PROD_INSTANCE_HC_URL="http://localhost:9051`cat ${HEALTH_CHECK_URL_CONF}`"
+  PASSIVE_PROD_INSTANCE_HC_URL="http://localhost:9052`cat ${HEALTH_CHECK_URL_CONF}`"
 fi
 if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_2}" ]; then
   NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_1}
   ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
   PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
   ACTIVE_PROD_INSTANCE_ID=instance2
+  PASSIVE_PROD_INSTANCE_ID=instance1
+  ACTIVE_PROD_INSTANCE_HC_URL="http://localhost:9052`cat ${HEALTH_CHECK_URL_CONF}`"
+  PASSIVE_PROD_INSTANCE_HC_URL="http://localhost:9051`cat ${HEALTH_CHECK_URL_CONF}`"
 fi
 # in the case of the active config not being set we want
 # to make sure and not attempt to set things

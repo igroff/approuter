@@ -15,11 +15,20 @@ if [ $? == 100 ]; then
   update_repo_as_needed ${PASSIVE_PROD_INSTANCE}
   #   start instance
   ${PASSIVE_PROD_INSTANCE_START_CTL_FILE}
+  #   wait for the instance to serve healthy
+  ${APPROUTER_BIN_DIR}/http_ready "${PASSIVE_PROD_INSTANCE_HC_URL}"
+  #   if it doesn't come up normally.... log something and move on, we can only
+  #   do so much
+  READY_RESULT=$?
+  if [ ${READY_RESULT} -ne 0 ]; then
+    echo "failed waiting for http ready ${READY_RESULT}"
+  fi
   #   switch nginx config after which our passive references
   #   will be active and our active references will be passive
   switch_nginx_config
   #   ideally we'd wait for the old instance to drain....
   #   update the newly passive instance
+  sleep 10;
   ${ACTIVE_PROD_INSTANCE_STOP_CTL_FILE}
   update_repo_as_needed ${ACTIVE_PROD_INSTANCE}
   if [ $? != 100 ]; then
