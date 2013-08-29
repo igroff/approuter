@@ -1,0 +1,9 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
+
+silent_pushd ${PERP_BASE}
+INSTANCE_GROUP=${1?You must provide an instance name}
+find . -name "${INSTANCE_GROUP}????" | sed -e s[./${INSTANCE_GROUP}[[g
+silent_popd

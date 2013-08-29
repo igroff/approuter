@@ -1,0 +1,36 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
+
+APP_DIR=${PWD}
+STARTING_PORT=${1?Need a starting port number}
+NUM_INSTANCES=${2-1}
+INSTANCE_NAME_BASE=`basename ${APP_DIR}`
+
+# exit with a 100 if we have no start file
+if [ ! -f ./start ]; then
+  echo "missing control file './start'"
+  exit 100
+fi
+
+ENDING_PORT=`echo "${STARTING_PORT}+${NUM_INSTANCES}-1" | bc`
+
+for port in $(eval echo "{$STARTING_PORT..$ENDING_PORT}")
+do
+  INSTANCE_NAME=${INSTANCE_NAME_BASE}_${port}
+  START_CMD="./start ${port}"
+  # create our perp control files, and directory structure
+  mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
+  cat ${TEMPLATE_DIR}/perp.rc.main | \
+    sed -e "s[{{start_cmd}}[${START_CMD}[g" |\
+    sed -e "s[{{env_settings_file}}[${ENV_SETTINGS_FILE}[g" |\
+    sed -e s[{{change_to_dir}}[${1}[g  > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
+  cat ${TEMPLATE_DIR}/perp.rc.log | \
+    sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log
+
+  chmod +x ${PERP_BASE}/${INSTANCE_NAME}/rc.*
+  chmod +t ${PERP_BASE}/${INSTANCE_NAME}
+  echo $port
+done
+

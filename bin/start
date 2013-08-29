@@ -1,0 +1,52 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+REPO_URL=${1?You must provide a git repository URL}
+STARTING_PORT=${2?You must provide a starting port}
+NUM_INSTANCES=${3?You must provide a number of instances to prefork}
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+# generate our logrotate conf and crontab entry
+sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
+echo "0 * * * *   source ${ROOT}/environment && logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
+
+chmod -R +x ${RUNTIME_BIN_DIR}
+perpd ${PERP_BASE} > ${LOG_DIR}/perpd.log 2>&1 &
+if [ -z "${NO_CRONTAB_INSTALL}" ]; then
+  echo "installing crontab, just so you know..."
+  crontab ${VAR_DIR}/crontab
+fi
+# clone repo
+silent_pushd ${INSTANCE_GROUP_ROOT}
+INSTANCE_GROUP_NAME=`clone_repo ${REPO_URL}`
+silent_popd
+
+INSTANCE_GROUP_PATH=${INSTANCE_GROUP_ROOT}/${INSTANCE_GROUP_NAME}
+
+# make start scripts
+silent_pushd ${INSTANCE_GROUP_PATH}
+make_control_scripts ${STARTING_PORT} ${NUM_INSTANCES}
+if [ $? -ne 0 ]; then
+  echo "error making control scripts for instance group at ${INSTANCE_GROUP_PATH}"
+  exit 100
+fi
+silent_popd
+
+# start instances
+perphup
+
+# wait till a new instance is serving (at least one)
+${APPROUTER_BIN_DIR}/http_ready "http://localhost:${STARTING_PORT}`cat ${HEALTH_CHECK_URL_CONF}`"
+#   if it doesn't come up normally.... log something and move on, we can only
+#   do so much
+if [ $? -ne 0 ]; then
+  echo "failed waiting for http ready ${READY_RESULT}"
+  echo "continuing"
+fi
+
+# generate nginx config for new instance group
+switch_nginx_config `gen_nginx_config ${INSTANCE_GROUP_NAME}`

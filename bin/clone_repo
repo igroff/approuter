@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+REPO_URL=${1?You must provide a git repository URL}
+DEST_DIR_NAME=`date -u +"%Y-%m-%dT%H_%M_%S%z"`
+
+if [ -d $DEST_DIR_NAME ]; then
+  # destination directory already exists, try again later :)
+  # it's time based, so if you wait a second and try again you 
+  # should be good unless something evil is afoot
+  exit 100
+fi
+
+git clone ${REPO_URL} ${DEST_DIR_NAME}
+

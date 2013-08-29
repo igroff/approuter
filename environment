@@ -13,6 +13,7 @@ else
 
     HERE=`pwd`
     ROOT=${HERE}/build_output
+    APPROUTER_ROOT=${HERE}
     LD_LIBRARY_PATH=${ROOT}/lib:$PRE_APPROUTER_LD_LIBRARY_PATH
     PATH=${HERE}/bin:${ROOT}/bin:$PATH
     PATH=${ROOT}/usr/local/ssl/bin/:$PATH
@@ -56,6 +57,7 @@ else
     export PS1
     export MANPATH
     export PERP_BASE
+    export APPROUTER_ROOT
     export -f deactivate
 fi
 

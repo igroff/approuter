@@ -1,0 +1,40 @@
+#! /usr/bin/env bash
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+INSTANCE_GROUP=${1?You must provide an instance group to operate on}
+UPSTREAM_CONF_FILE=${NGINX_CONF_ROOT}/upstream_${INSTANCE_GROUP}
+# generate our upstream configuration for the ports associated
+# with the instance group we're working on
+echo "upstream proxy_to {" >> ${UPSTREAM_CONF_FILE}
+for port in `list_ports_for_instance`
+do
+  echo "  server 127.0.0.1:${port};" >> ${UPSTREAM_CONF_FILE}
+done
+echo "}" >> ${UPSTREAM_CONF_FILE}
+
+NGINX_CONF_FILE=${NGINX_CONF_ROOT}/nginx.${INSTANCE_GROUP}.conf
+get_instance_group_sha ${INSTANCE_GROUP}
+
+cat ${TEMPLATE_DIR}/nginx.conf | \
+  sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
+  sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
+  sed -e s[{{cache_dir}}[${CACHE_DIR}[g  | \
+  sed -e s[{{temp_dir}}[${TEMP_DIR}[g  | \
+  sed -e s[{{listen_port}}[${NGINX_PORT}[g  | \
+  sed -e s[{{storage_root}}[${ID_MAP_ROOT}[g  | \
+  sed -e s[{{etc_dir}}[${CONF_ROOT}[g  | \
+  sed -e s[{{instance_sha}}[${INSTANCE_GROUP_SHA}[g  | \
+  sed -e s[{{instance_group}}[${INSTANCE_GROUP}[g  | \
+  sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE}
+# move our access_by_lua_file file into the appropriate place
+cp ${TEMPLATE_DIR}/identity_map.lua ${BUILD_ROOT}
+# if the user has not asked for proxy auth to be included
+if [ "${PROXY_AUTH}x" == "x" ]; then
+  # we will drop the auth inclusion
+  sed -i "" -e '/access_by_lua_file/'D ${NGINX_CONF_FILE}
+fi
+cp templates/mime.types ${NGINX_CONF_ROOT}
+echo ${NGINX_CONF_FILE}
