@@ -9,7 +9,7 @@ source ${MY_DIR}/environment
 ${MY_DIR}/update_repo_as_needed test_only ${PASSIVE_PROD_INSTANCE}
 # if it has updates (update_repo_as_needed returns 100)
 if [ $? == 100 ]; then
-  #   stop the instance 
+  #   stop the instance
   ${PASSIVE_PROD_INSTANCE_STOP_CTL_FILE}
   #   update instance
   update_repo_as_needed ${PASSIVE_PROD_INSTANCE}

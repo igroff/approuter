@@ -7,6 +7,7 @@ function set_instance_name_from_dir(){
 
 function set_instance_start_control_file_path(){
   INSTANCE_PATH=$1
+  RUN_AT_PORT=$2
   START_CTL_FILE=${RUNTIME_BIN_DIR}/start_${INSTANCE_NAME}
   # this is the name of a helper file that can be called and will
   # block until the requested instance is running, or will timeout 
