@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${MY_DIR}/environment
+
+NGINX_CONF_FILE=${1:? You must provide the path to an nginx config}
+
+ln -sf ${NGINX_CONF_FILE} ${NGINX_CONF_LINK}
+# forcing a reload of the nginx config, causing a graceful
+# 'roll' from the old instance to the new
+if [ -f ${NGINX_PIDFILE} ]; then
+  kill -s HUP `cat ${NGINX_PIDFILE}`
+fi

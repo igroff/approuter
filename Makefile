@@ -59,6 +59,9 @@ ${BUILD_ROOT}:
 remanaged:
 	@-rm -rf ./managed
 
+clean_managed: remanaged
+	echo "cleaned up all the managed code"
+
 clean: remanaged
 	-rm -rf ${INSTALL_LOCATION}
 	-rm -rf ${BUILD_ROOT}

@@ -10,6 +10,9 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
 
+# always start clean
+rm -rf ${INSTANCE_GROUP_ROOT}/*
+
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
 echo "0 * * * *   source ${ROOT}/environment && logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
@@ -23,10 +26,16 @@ fi
 # clone repo
 silent_pushd ${INSTANCE_GROUP_ROOT}
 INSTANCE_GROUP_NAME=`clone_repo ${REPO_URL}`
+CLONE_RESULT=$?
 silent_popd
+if [ ${CLONE_RESULT} != 0 ]; then
+  echo "Failed cloning ${REPO_URL}"
+  exit 101
+fi
 
 INSTANCE_GROUP_PATH=${INSTANCE_GROUP_ROOT}/${INSTANCE_GROUP_NAME}
 
+echo "Starting ${INSTANCE_GROUP_PATH}"
 # make start scripts
 silent_pushd ${INSTANCE_GROUP_PATH}
 make_control_scripts ${STARTING_PORT} ${NUM_INSTANCES}
@@ -48,5 +57,6 @@ if [ $? -ne 0 ]; then
   echo "continuing"
 fi
 
+${MY_DIR}/make_nginx_control_files
 # generate nginx config for new instance group
 switch_nginx_config `gen_nginx_config ${INSTANCE_GROUP_NAME}`

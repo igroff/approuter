@@ -25,7 +25,8 @@ do
   cat ${TEMPLATE_DIR}/perp.rc.main | \
     sed -e "s[{{start_cmd}}[${START_CMD}[g" |\
     sed -e "s[{{env_settings_file}}[${ENV_SETTINGS_FILE}[g" |\
-    sed -e s[{{change_to_dir}}[${1}[g  > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
+    sed -e "s[{{change_to_dir}}[${APP_DIR}[g" \
+    > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
   cat ${TEMPLATE_DIR}/perp.rc.log | \
     sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log
 

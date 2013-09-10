@@ -11,5 +11,7 @@ if [ -d $DEST_DIR_NAME ]; then
   exit 100
 fi
 
-git clone ${REPO_URL} ${DEST_DIR_NAME}
+git clone --quiet ${REPO_URL} ${DEST_DIR_NAME}
+# return the name of the directory into which we're cloning
+echo ${DEST_DIR_NAME}
 

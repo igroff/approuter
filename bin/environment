@@ -1,5 +1,4 @@
 #! /usr/bin/env bash
-
 silent_pushd(){ pushd $1 > /dev/null 2>&1; }
 silent_popd(){ popd $1 > /dev/null 2>&1 ; }
 
@@ -67,50 +66,9 @@ NGINX_CONF_LINK=${GENERATED_CONF_DIR}/nginx/nginx.conf
 NGINX_ACTIVE_CONFIG=`readlink ${NGINX_CONF_LINK}`
 NGINX_CONF_FILE=${GENERATED_CONF_DIR}/nginx/nginx.conf
 NGINX_PORT=9090
-# we roll between 2 production instances so we have
-# one config for each
-NGINX_CONF_TEMPLATE_1=${ROOT}/templates/nginx.1.conf
-NGINX_CONF_TEMPLATE_2=${ROOT}/templates/nginx.2.conf
-# set our passive (inactive) config for our production 
-# instance.  this implies the passive and active instaces
-# so we'll set them here as well.  I'm deliberately going
-# to test and set each case so if something goes wonky
-# we get nothing set at all and fail in a big way
-if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_1}" ]; then
-  NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_2}
-  ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
-  PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
-  ACTIVE_PROD_INSTANCE_ID=instance1
-  PASSIVE_PROD_INSTANCE_ID=instance2
-  ACTIVE_PROD_INSTANCE_HC_URL="http://localhost:9051`cat ${HEALTH_CHECK_URL_CONF}`"
-  PASSIVE_PROD_INSTANCE_HC_URL="http://localhost:9052`cat ${HEALTH_CHECK_URL_CONF}`"
-fi
-if [ "${NGINX_ACTIVE_CONFIG}" = "${NGINX_CONF_FILE_2}" ]; then
-  NGINX_PASSIVE_CONFIG=${NGINX_CONF_FILE_1}
-  ACTIVE_PROD_INSTANCE=${PROD_ROOT}/instance2
-  PASSIVE_PROD_INSTANCE=${PROD_ROOT}/instance1
-  ACTIVE_PROD_INSTANCE_ID=instance2
-  PASSIVE_PROD_INSTANCE_ID=instance1
-  ACTIVE_PROD_INSTANCE_HC_URL="http://localhost:9052`cat ${HEALTH_CHECK_URL_CONF}`"
-  PASSIVE_PROD_INSTANCE_HC_URL="http://localhost:9051`cat ${HEALTH_CHECK_URL_CONF}`"
-fi
-# in the case of the active config not being set we want
-# to make sure and not attempt to set things
-if [ "${NGINX_ACTIVE_CONFIG}x" != "x" ]; then
-  set_instance_name_from_dir ${ACTIVE_PROD_INSTANCE}
-  set_instance_start_control_file_path ${ACTIVE_PROD_INSTANCE}
-  ACTIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
-  set_instance_stop_control_file_path ${ACTIVE_PROD_INSTANCE}
-  ACTIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
-
-  set_instance_name_from_dir ${PASSIVE_PROD_INSTANCE}
-  set_instance_start_control_file_path ${PASSIVE_PROD_INSTANCE}
-  PASSIVE_PROD_INSTANCE_START_CTL_FILE=${START_CTL_FILE}
-  set_instance_stop_control_file_path ${PASSIVE_PROD_INSTANCE}
-  PASSIVE_PROD_INSTANCE_STOP_CTL_FILE=${STOP_CTL_FILE}
-fi
 
 mkdir -p ${GENERATED_CONF_DIR}
+mkdir -p ${INSTANCE_GROUP_ROOT}
 mkdir -p ${NGINX_CONF_ROOT}
 mkdir -p ${RUNTIME_BIN_DIR}
 mkdir -p ${NGINX_CACHE_DIR}

@@ -3,20 +3,12 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
-INSTANCE_GROUP=${1?You must provide an instance group to configure nginx for}
-
-# create our nginx config for the requested instance group
-NGINX_GROUP_CONFIG=`$MY_DIR/gen_nginx_config ${INSTANCE_GROUP}`  
-
-ln -s ${NGINX_GROUP_CONFIG} ${NGINX_CONF_LINK}
-if [ $? != 0 ]; then
-  echo whoa, something is broken the nginx.conf link should not be there
-  exit 1883
-fi
 
 # write out nginx control files
 printf "#! /usr/bin/env bash\nperpctl U nginx" > ${RUNTIME_BIN_DIR}/start_nginx
 printf "#! /usr/bin/env bash\nperpctl D nginx" > ${RUNTIME_BIN_DIR}/stop_nginx
+chmod +x ${RUNTIME_BIN_DIR}/*
+
 # nginx for perpd
 # create our perp control files, and directory structure
 mkdir -p ${PERP_BASE}/nginx
@@ -29,4 +21,3 @@ cat ${TEMPLATE_DIR}/perp.rc.log | \
 chmod +x ${PERP_BASE}/nginx/rc.*
 # mark the perp service as being enabled
 chmod +t ${PERP_BASE}/nginx
-
