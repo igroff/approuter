@@ -11,8 +11,9 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
 fi
 
 # always start clean
+rm -rf ${GENERATED_CONF_DIR}/*
 rm -rf ${INSTANCE_GROUP_ROOT}/*
-rm -rf ${PERP_BASE}
+rm -rf ${PERP_BASE}/*
 
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
@@ -61,3 +62,6 @@ fi
 ${MY_DIR}/make_nginx_control_files
 # generate nginx config for new instance group
 switch_nginx_config `gen_nginx_config ${INSTANCE_GROUP_NAME}`
+
+# make sure we update perp about nginx
+perphup

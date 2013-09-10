@@ -36,6 +36,7 @@ ROOT=${APPROUTER_ROOT}
 MANAGED_ROOT=${ROOT}/managed
 APPROUTER_BIN_DIR=${ROOT}/bin
 BUILD_ROOT=${ROOT}/build_output
+SBIN_DIR=${BUILD_ROOT}/sbin
 CONF_ROOT=${ROOT}/etc
 PROD_BRANCH_CONF=${CONF_ROOT}/prod_branch
 HEALTH_CHECK_URL_CONF=${CONF_ROOT}/health_check
@@ -75,6 +76,7 @@ mkdir -p ${NGINX_CACHE_DIR}
 mkdir -p ${TEMP_DIR}
 mkdir -p ${PERP_BASE}
 mkdir -p ${LOG_DIR}
+mkdir -p ${RUN_DIR}
 
 export -f set_instance_name_from_dir
 export -f set_instance_start_control_file_path
