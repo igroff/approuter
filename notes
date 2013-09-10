@@ -1,0 +1,38 @@
+
+shut_down_instance:
+- paramter: instance name
+- PERP_BASE
+- shuts down all of the services associated with the given directory name
+-- instance name will be part of the service name, anything service matching will be shutdown
+
+remove_control_scripts:
+- parameter: instance name
+- PERP_BASE
+-- for the directory given as a command line parameter, remove all the corresponding perpd control scripts 
+
+make_control_scripts:
+- create perpd control scripts for n instances of an app in a single directory
+-- paramter: instance name 
+-- needs STARTING_PORT, NUM_INSTANCES, PERP_BASE
+- operates in CWD
+- assumes current working directory is the root of the application
+- blows up if there is no ./start file
+- assumes start file takes a single port parameter, execs the app
+- starting at base port num, create control scripts that start N instances each 1 higher port than the previous
+-- services will be named ${INSTANCE_NAME}_${PORT_NUM}
+
+clone_repo:
+- needs GIT_URL
+- works in CWD
+- clones repository into directory named with time of checkout
+- returns name of directory created
+
+status: 
+- PERP_BASE
+- prints the status of things
+
+start:
+- starts the whole thing
+
+shutdown:
+- shuts it all down
