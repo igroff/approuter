@@ -12,6 +12,7 @@ fi
 
 # always start clean
 rm -rf ${INSTANCE_GROUP_ROOT}/*
+rm -rf ${PERP_BASE}
 
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}

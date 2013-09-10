@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+STARTING_PORT=${1:?You must provide a starting port number}
+RESULT="NO PORTS AT ALL!"
+for port in $(seq ${STARTING_PORT} 65000);
+do
+  echo -ne "\035" | telnet 127.0.0.1 $port > /dev/null 2>&1;
+  if [ $? -eq 1 ]; then
+    RESULT=$port
+    break;
+  fi
+done
+
+echo ${RESULT}

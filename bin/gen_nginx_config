@@ -9,7 +9,7 @@ UPSTREAM_CONF_FILE=${NGINX_CONF_ROOT}/upstream_${INSTANCE_GROUP}
 # generate our upstream configuration for the ports associated
 # with the instance group we're working on
 echo "upstream proxy_to {" >> ${UPSTREAM_CONF_FILE}
-for port in `${MY_DIR}/list_ports_for_instance ${INSTANCE_GROUP}`
+for port in `${MY_DIR}/list_ports_for_instance_group ${INSTANCE_GROUP}`
 do
   echo "  server 127.0.0.1:${port};" >> ${UPSTREAM_CONF_FILE}
 done
@@ -28,6 +28,7 @@ cat ${TEMPLATE_DIR}/nginx.conf | \
   sed -e s[{{etc_dir}}[${CONF_ROOT}[g  | \
   sed -e s[{{instance_sha}}[${INSTANCE_GROUP_SHA}[g  | \
   sed -e s[{{instance_group}}[${INSTANCE_GROUP}[g  | \
+  sed -e s[{{upstream_conf_file}}[${UPSTREAM_CONF_FILE}[g  | \
   sed -e s[{{run_dir}}[${RUN_DIR}[g > ${NGINX_CONF_FILE}
 # move our access_by_lua_file file into the appropriate place
 cp ${TEMPLATE_DIR}/identity_map.lua ${BUILD_ROOT}
@@ -36,6 +37,5 @@ if [ "${PROXY_AUTH}x" == "x" ]; then
   # we will drop the auth inclusion
   sed -i "" -e '/access_by_lua_file/'D ${NGINX_CONF_FILE}
 fi
-ln -s ${NGINX_CONF_FILE} ${NGINX_CONF_LINK}
 cp templates/mime.types ${NGINX_CONF_ROOT}
 echo ${NGINX_CONF_FILE}
