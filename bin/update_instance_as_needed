@@ -22,37 +22,21 @@ if [ $? == 100 ]; then
   fi
   NEW_DIR=`clone_repo ${REPO_URL}`
   pushd ${NEW_DIR}
-  # find the next ports!
-  make_control_scripts  ${NUM_INSTANCES}
+  for port in $(make_control_scripts ${NUM_INSTANCES})
+  do
+    #   wait for the instance to serve healthy
+    ${APPROUTER_BIN_DIR}/http_ready "http://localhost:${port}"
+    #   if it doesn't come up normally.... log something and move on, we can only
+    #   do so much and there may be something we're unaware of
+    READY_RESULT=$?
+    if [ ${READY_RESULT} -ne 0 ]; then
+      echo "failed waiting for http ready ${READY_RESULT}"
+    fi
+  done
   popd
   
-  
-  #   wait for the instance to serve healthy
-  ${APPROUTER_BIN_DIR}/http_ready "${PASSIVE_PROD_INSTANCE_HC_URL}"
-  #   if it doesn't come up normally.... log something and move on, we can only
-  #   do so much
-  READY_RESULT=$?
-  if [ ${READY_RESULT} -ne 0 ]; then
-    echo "failed waiting for http ready ${READY_RESULT}"
-  fi
-  #   switch nginx config after which our passive references
-  #   will be active and our active references will be passive
-  switch_nginx_config
-  #   ideally we'd wait for the old instance to drain....
-  #   update the newly passive instance
-  sleep 10;
-  ${ACTIVE_PROD_INSTANCE_STOP_CTL_FILE}
-  update_repo_as_needed ${ACTIVE_PROD_INSTANCE}
-  if [ $? != 100 ]; then
-    # check to see if our versions are mismatched
-    echo "mismatched prod repo versions!"
-  fi
-  #   start newly passive instance
-  ${ACTIVE_PROD_INSTANCE_START_CTL_FILE}
-  popd
+  switch_nginx_config $(gen_nginx_config ${INSTANCE_DIR})
 fi
 
-# we're leaving both instances running at all times
-# we can check that both prod instances are at the same version
-# as (outside the switch window) they should both be up and
-# at the same version
+# we leave the old instances in place so they can drain stop
+# we'll reap them later
