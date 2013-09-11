@@ -4,8 +4,8 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
 APP_DIR=${PWD}
-STARTING_PORT=${1?Need a starting port number}
-NUM_INSTANCES=${2-1}
+STARTING_PORT=9000
+NUM_INSTANCES=${1-1}
 INSTANCE_GROUP_NAME=`basename ${APP_DIR}`
 
 # exit with a 100 if we have no start file
@@ -14,12 +14,12 @@ if [ ! -f ./start ]; then
   exit 100
 fi
 
-ENDING_PORT=`echo "${STARTING_PORT}+${NUM_INSTANCES}-1" | bc`
-
-for port in $(eval echo "{$STARTING_PORT..$ENDING_PORT}")
+PORT=${STARTING_PORT}
+for count in $(seq ${NUM_INSTANCES})
 do
-  INSTANCE_NAME=${INSTANCE_GROUP_NAME}_${port}
-  START_CMD="./start ${port}"
+  PORT=`find_next_available_port ${PORT}`
+  INSTANCE_NAME=${INSTANCE_GROUP_NAME}_${PORT}
+  START_CMD="./start ${PORT}"
   # create our perp control files, and directory structure
   mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
   cat ${TEMPLATE_DIR}/perp.rc.main | \
@@ -33,6 +33,6 @@ do
 
   chmod +x ${PERP_BASE}/${INSTANCE_NAME}/rc.*
   chmod +t ${PERP_BASE}/${INSTANCE_NAME}
-  echo $port
+  echo $PORT
 done
 

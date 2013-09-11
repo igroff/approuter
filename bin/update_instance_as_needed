@@ -3,18 +3,30 @@
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
-# our active and passive instances are all determined for us
-# in the environment 'include'
-# check for updates to passive instance
-${MY_DIR}/update_repo_as_needed test_only ${PASSIVE_PROD_INSTANCE}
+INSTANCE_DIR=${1?You must provid an instance directory to check}
+LATEST_LINK=${INSTANCE_DIR}/latest
+if [ ! -f ${LATEST_LINK} ]; then
+  echo "Unable to find latest indicator for instance ${INSTANCE_DIR}"
+  exit 101
+fi
+# for a given app instance determine if there are updates available
+${MY_DIR}/update_repo_as_needed test_only ${LATEST_LINK}
 # if it has updates (update_repo_as_needed returns 100)
 if [ $? == 100 ]; then
-  #   stop the instance 
-  ${PASSIVE_PROD_INSTANCE_STOP_CTL_FILE}
-  #   update instance
-  update_repo_as_needed ${PASSIVE_PROD_INSTANCE}
-  #   start instance
-  ${PASSIVE_PROD_INSTANCE_START_CTL_FILE}
+  pushd ${INSTANCE_DIR} > /dev/null
+
+  REPO_URL=get_git_origin_url ${LATEST_LINK}
+  if [ $? != 0 ]; then
+    # get_git_origin_url should have provided a message
+    exit 102
+  fi
+  NEW_DIR=`clone_repo ${REPO_URL}`
+  pushd ${NEW_DIR}
+  # find the next ports!
+  make_control_scripts  ${NUM_INSTANCES}
+  popd
+  
+  
   #   wait for the instance to serve healthy
   ${APPROUTER_BIN_DIR}/http_ready "${PASSIVE_PROD_INSTANCE_HC_URL}"
   #   if it doesn't come up normally.... log something and move on, we can only
@@ -37,6 +49,7 @@ if [ $? == 100 ]; then
   fi
   #   start newly passive instance
   ${ACTIVE_PROD_INSTANCE_START_CTL_FILE}
+  popd
 fi
 
 # we're leaving both instances running at all times

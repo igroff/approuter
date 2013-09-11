@@ -1,0 +1,20 @@
+#! /usr/bin/env bash
+REPO_DIR=${1?You must provide a repository direcory}
+if [ ! -d "$REPO_DIR" ]; then
+  echo "could not find repository directory ${REPO_DIR}"
+  exit 101
+fi
+if [ ! -d "${REPO_DIR}/.git" ]; then
+  echo "This doesn't appear to be the root of a git repository"
+  exit 103
+fi
+
+pushd $REPO_DIR > /dev/null
+ORIGIN_URL=`git config -l | grep remote.origin.url | sed -e s[remote.origin.url=[[g`
+if [ -z "$ORIGIN_URL" ]; then
+  echo "could find no origin url, is ${REPO_DIR} really a git repository"
+  exit 102
+fi
+
+popd > /dev/null
+echo $ORIGIN_URL
