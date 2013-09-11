@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/environment
+ACTION=$1
+if [ "${ACTION}x" == "x" ]; then
+  # we do expect to own the machine, so this is
+  # reasonable
+  killall perpd
+  # nothing is running so nothing can be active
+  rm ${ACTIVE_INSTANCE_LINK}
+else
+  perpctl D ${ACTION}
+fi

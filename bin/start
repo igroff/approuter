@@ -1,19 +1,31 @@
 #! /usr/bin/env bash
 # vim: set ft=shell
 
-REPO_URL=${1?You must provide a git repository URL}
-STARTING_PORT=${2?You must provide a starting port}
-NUM_INSTANCES=${3?You must provide a number of instances to prefork}
-
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
+if [ $# == 0 -a -f ${CONF_ROOT}/latest ]; then
+  echo "using saved configuration"
+  source ${CONF_ROOT}/latest
+else
+  REPO_URL=${1?You must provide a git repository URL}
+  STARTING_PORT=${2?You must provide a starting port}
+  NUM_INSTANCES=${3?You must provide a number of instances to prefork}
+fi
+
+# save our settings for use in the future
+echo "export REPO_URL=${REPO_URL}" > ${CONF_ROOT}/latest
+echo "export STARTING_PORT=${STARTING_PORT}" >> ${CONF_ROOT}/latest
+echo "export NUM_INSTANCES=${NUM_INSTANCES}" >> ${CONF_ROOT}/latest
 
 # always start clean
 rm -rf ${GENERATED_CONF_DIR}/*
 rm -rf ${INSTANCE_GROUP_ROOT}/*
 rm -rf ${PERP_BASE}/*
+rm -rf ${VAR_DIR}/crontab
+rm -f ${VAR_DIR}/run_data
+rm -rf ${RUNTIME_BIN_DIR}/*
 
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
