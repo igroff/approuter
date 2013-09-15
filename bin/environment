@@ -7,6 +7,10 @@ function set_instance_name_from_dir(){
   INSTANCE_NAME=`basename $1`
 }
 
+function log(){
+  echo $1 >&2
+}
+
 function set_instance_start_control_file_path(){
   INSTANCE_PATH=$1
   START_CTL_FILE=${RUNTIME_BIN_DIR}/start_${INSTANCE_NAME}
@@ -29,6 +33,12 @@ function get_instance_group_sha(){
   INSTANCE_GROUP=${1?You must provide an instance group to get_instance_group_sha()}
   silent_pushd ${INSTANCE_GROUP_ROOT}
   INSTANCE_GROUP_SHA=`git log -1 --oneline | awk '{ print $1 }'`
+  silent_popd
+}
+function get_repo_sha(){
+  REPO_DIR=${1?You must provide a path to a repo}
+  silent_pushd ${REPO_DIR}
+  REPO_SHA=`git log -1 --oneline | awk '{ print $1 }'`
   silent_popd
 }
 

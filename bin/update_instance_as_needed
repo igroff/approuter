@@ -5,7 +5,7 @@ source ${MY_DIR}/environment
 
 INSTANCE_DIR=${1?You must provid an instance directory to check}
 LATEST_LINK=${INSTANCE_DIR}/latest
-if [ ! -f ${LATEST_LINK} ]; then
+if [ ! -e ${LATEST_LINK} ]; then
   echo "Unable to find latest indicator for instance ${INSTANCE_DIR}"
   exit 101
 fi
@@ -13,29 +13,19 @@ fi
 ${MY_DIR}/update_repo_as_needed test_only ${LATEST_LINK}
 # if it has updates (update_repo_as_needed returns 100)
 if [ $? == 100 ]; then
+  echo "Changes detected, fetching..."
   pushd ${INSTANCE_DIR} > /dev/null
 
-  REPO_URL=get_git_origin_url ${LATEST_LINK}
+  REPO_URL=`${MY_DIR}/get_git_origin_url ${LATEST_LINK}`
   if [ $? != 0 ]; then
     # get_git_origin_url should have provided a message
+    # and that message will be here:
+    echo ${REPO_URL}
     exit 102
   fi
-  NEW_DIR=`clone_repo ${REPO_URL}`
-  pushd ${NEW_DIR}
-  for port in $(make_control_scripts ${NUM_INSTANCES})
-  do
-    #   wait for the instance to serve healthy
-    ${APPROUTER_BIN_DIR}/http_ready "http://localhost:${port}"
-    #   if it doesn't come up normally.... log something and move on, we can only
-    #   do so much and there may be something we're unaware of
-    READY_RESULT=$?
-    if [ ${READY_RESULT} -ne 0 ]; then
-      echo "failed waiting for http ready ${READY_RESULT}"
-    fi
-  done
-  popd
+  ${MY_DIR}/start_new_instance ${INSTANCE_DIR} ${REPO_URL}
   
-  switch_nginx_config $(gen_nginx_config ${INSTANCE_DIR})
+  switch_nginx_config $(gen_nginx_config ${NEW_INSTANCE_NAME})
 fi
 
 # we leave the old instances in place so they can drain stop

@@ -10,7 +10,6 @@ if [ $1 == "start" ]; then
   pushd {{change_to_dir}} > /dev/null
   # make a link to show which one is running
   pushd .. >> /dev/null
-  ln -sf {{change_to_dir}} {{active_instance_link}}
   popd >> /dev/null
   exec {{start_cmd}}
 else

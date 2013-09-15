@@ -1,0 +1,32 @@
+#! /usr/bin/env bash
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+START_NEW_INSTANCE_HERE=${1?You must provide a directory to start the instance in}
+REPO_URL=${2?You must provide a repository url for the instance}
+
+silent_pushd ${START_NEW_INSTANCE_HERE}
+NEW_DIR=`clone_repo ${REPO_URL}`
+NEW_INSTANCE_NAME=${NEW_DIR}
+silent_pushd ${NEW_DIR}
+ln -fs ${NEW_DIR}/latest
+NEW_INSTANCE_PORTS=`make_control_scripts ${NUM_INSTANCES}`
+# have perp look for, and start, our new instances
+perphup
+ln -fs ${NEW_DIR}/active
+for port in $NEW_INSTANCE_PORTS
+do
+  #   wait for the instance to serve healthy, perp will have started it for us
+  ${APPROUTER_BIN_DIR}/http_ready "http://localhost:${port}"
+  #   if it doesn't come up normally.... log something and move on, we can only
+  #   do so much and there may be something we're unaware of
+  READY_RESULT=$?
+  if [ ${READY_RESULT} -ne 0 ]; then
+    echo "failed waiting for http ready ${READY_RESULT}"
+  fi
+done
+silent_popd
+silent_popd
+echo ${START_NEW_INSTANCE_HERE}/${NEW_INSTANCE_NAME}
