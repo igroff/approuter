@@ -4,7 +4,7 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
 
-INSTANCE_GROUP_PATH=${1?You must provide an instance group to operate on}
+INSTANCE_GROUP_PATH=${1?You must provide a path to an instance group to operate on}
 INSTANCE_GROUP_NAME=`basename ${INSTANCE_GROUP_PATH}`
 UPSTREAM_CONF_FILE=${NGINX_CONF_ROOT}/upstream_${INSTANCE_GROUP_NAME}
 # generate our upstream configuration for the ports associated

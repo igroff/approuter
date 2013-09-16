@@ -4,7 +4,7 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
 INSTANCE_DIR=${1?You must provid an instance directory to check}
-LATEST_LINK=${INSTANCE_DIR}/latest
+LATEST_LINK=${INSTANCE_DIR}/latest_cloned
 if [ ! -e ${LATEST_LINK} ]; then
   echo "Unable to find latest indicator for instance ${INSTANCE_DIR}"
   exit 101
@@ -23,9 +23,9 @@ if [ $? == 100 ]; then
     echo ${REPO_URL}
     exit 102
   fi
-  ${MY_DIR}/start_new_instance ${INSTANCE_DIR} ${REPO_URL}
+  NEW_INSTANCE_PATH=`${MY_DIR}/start_new_instance ${INSTANCE_DIR} ${REPO_URL}`
   
-  switch_nginx_config $(gen_nginx_config ${NEW_INSTANCE_NAME})
+  switch_nginx_config $(gen_nginx_config ${NEW_INSTANCE_PATH})
 fi
 
 # we leave the old instances in place so they can drain stop

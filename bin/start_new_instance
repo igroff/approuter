@@ -11,11 +11,10 @@ silent_pushd ${START_NEW_INSTANCE_HERE}
 NEW_DIR=`clone_repo ${REPO_URL}`
 NEW_INSTANCE_NAME=${NEW_DIR}
 silent_pushd ${NEW_DIR}
-ln -fs ${NEW_DIR}/latest
 NEW_INSTANCE_PORTS=`make_control_scripts ${NUM_INSTANCES}`
 # have perp look for, and start, our new instances
 perphup
-ln -fs ${NEW_DIR}/active
+ln -fs ${START_NEW_INSTANCE_HERE}/$NEW_DIR ${START_NEW_INSTANCE_HERE}/active
 for port in $NEW_INSTANCE_PORTS
 do
   #   wait for the instance to serve healthy, perp will have started it for us

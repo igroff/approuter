@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+list_running_instances | while read instance port;
+do
+  echo "Instance: ${instance} Port: ${port}"
+  echo "    Response:"
+  echo "    `curl -s http://localhost:${port}`"
+done
+
+echo "Nginx: ${NGINX_PORT}"
+echo "    Response:"
+echo "    `curl -s http://localhost:${NGINX_PORT}`"
+

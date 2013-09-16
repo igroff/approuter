@@ -10,7 +10,7 @@ if [ $# == 0 -a -f ${CONF_ROOT}/latest ]; then
   source ${CONF_ROOT}/latest
 else
   REPO_URL=${1?You must provide a git repository URL}
-  STARTING=${2?You must provide a port to listen on} 
+  STARTING_PORT=${2?You must provide a port to listen on} 
   NUM_INSTANCES=${3?You must provide a number of instances to prefork}
 fi
 
@@ -23,13 +23,13 @@ echo "export NUM_INSTANCES=${NUM_INSTANCES}" >> ${CONF_ROOT}/latest
 rm -rf ${GENERATED_CONF_DIR}/*
 rm -rf ${INSTANCE_GROUP_ROOT}/*
 rm -rf ${PERP_BASE}/*
-rm -f ${VAR_DIR}/run_data
+rm -f  ${VAR_DIR}/run_data
 rm -rf ${RUNTIME_BIN_DIR}/*
 
 # generate our logrotate conf and crontab entry
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
 echo "0 * * * *   source ${ROOT}/environment && logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" > ${VAR_DIR}/crontab
-echo "* * * * * cd ${ROOT} && source ./environment && ${MY_DIR}/update_active_instance >> ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
+echo "* * * * * cd ${ROOT} && source ./environment && ${MY_DIR}/update_instance_as_needed ${INSTANCE_GROUP_ROOT}>> ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
 
 chmod -R +x ${RUNTIME_BIN_DIR}
 perpd ${PERP_BASE} > ${LOG_DIR}/perpd.log 2>&1 &
