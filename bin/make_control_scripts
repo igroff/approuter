@@ -9,7 +9,7 @@ NUM_INSTANCES=${1-1}
 INSTANCE_GROUP_NAME=`basename ${APP_DIR}`
 
 # exit with a 100 if we have no start file
-if [ ! -f ./start ]; then
+if [ ! -f ./ar-start ]; then
   echo "missing control file './start'"
   exit 100
 fi
@@ -19,7 +19,7 @@ for count in $(seq ${NUM_INSTANCES})
 do
   PORT=`find_next_available_port ${PORT}`
   INSTANCE_NAME=${INSTANCE_GROUP_NAME}_${PORT}
-  START_CMD="./start ${PORT}"
+  START_CMD="./ar-start ${PORT}"
   # create our perp control files, and directory structure
   mkdir -p ${PERP_BASE}/${INSTANCE_NAME}
   cat ${TEMPLATE_DIR}/perp.rc.main | \
@@ -29,7 +29,6 @@ do
     > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
   cat ${TEMPLATE_DIR}/perp.rc.log | \
     sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log
-
   chmod +x ${PERP_BASE}/${INSTANCE_NAME}/rc.*
   chmod +t ${PERP_BASE}/${INSTANCE_NAME}
   echo $PORT

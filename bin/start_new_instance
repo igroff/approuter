@@ -11,19 +11,28 @@ silent_pushd ${START_NEW_INSTANCE_HERE}
 NEW_DIR=`clone_repo ${REPO_URL}`
 NEW_INSTANCE_NAME=${NEW_DIR}
 silent_pushd ${NEW_DIR}
+# run the installation script
+if [ -x ar-install ]; then
+  log "Running instance install script for: ${NEW_INSTANCE_NAME}"
+  ./ar-install >&2
+fi
 NEW_INSTANCE_PORTS=`make_control_scripts ${NUM_INSTANCES}`
+if [ -f ${HC_CONF} ]; then
+  HEALTH_CHECK_PATH=`cat ${HC_CONF}`
+fi
 # have perp look for, and start, our new instances
 perphup
 ln -fs ${START_NEW_INSTANCE_HERE}/$NEW_DIR ${START_NEW_INSTANCE_HERE}/active
 for port in $NEW_INSTANCE_PORTS
 do
+  log "starting instance on port ${port}"
   #   wait for the instance to serve healthy, perp will have started it for us
-  ${APPROUTER_BIN_DIR}/http_ready "http://localhost:${port}"
+  ${APPROUTER_BIN_DIR}/http_ready "http://localhost:${port}${HEALTH_CHECK_PATH}"
   #   if it doesn't come up normally.... log something and move on, we can only
   #   do so much and there may be something we're unaware of
   READY_RESULT=$?
   if [ ${READY_RESULT} -ne 0 ]; then
-    echo "failed waiting for http ready ${READY_RESULT}"
+    log "failed waiting for http ready ${READY_RESULT}"
   fi
 done
 silent_popd

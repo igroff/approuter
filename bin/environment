@@ -3,19 +3,13 @@ silent_pushd(){ pushd $1 > /dev/null 2>&1; }
 silent_popd(){ popd $1 > /dev/null 2>&1 ; }
 log(){ echo $1 >&2; }
 
-get_repo_sha(){
-  REPO_DIR=${1?You must provide a path to a repo}
-  silent_pushd ${REPO_DIR}
-  REPO_SHA=`git log -1 --oneline | awk '{ print $1 }'`
-  silent_popd
-}
-
 ROOT=${APPROUTER_ROOT}
 MANAGED_ROOT=${ROOT}/managed
 APPROUTER_BIN_DIR=${ROOT}/bin
 BUILD_ROOT=${ROOT}/build_output
 SBIN_DIR=${BUILD_ROOT}/sbin
 CONF_ROOT=${ROOT}/etc
+HC_CONF=${CONF_ROOT}/health_check.conf
 INSTANCE_GROUP_ROOT=${MANAGED_ROOT}/app_instances
 VAR_DIR=${MANAGED_ROOT}/var
 NGINX_CACHE_DIR=${VAR_DIR}/cache/nginx
