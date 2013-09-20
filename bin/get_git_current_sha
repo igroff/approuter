@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
 REPO_DIR=${1?You must provide a repository direcory}
 if [ ! -d "$REPO_DIR" ]; then
-  echo "could not find repository directory ${REPO_DIR}"
+  echo "could not find repository directory ${REPO_DIR}" >&2
   exit 101
 fi
 if [ ! -d "${REPO_DIR}/.git" ]; then
-  echo "This doesn't appear to be the root of a git repository"
+  echo "This doesn't appear to be the root of a git repository" >&2
   exit 103
 fi
 
@@ -13,7 +13,7 @@ pushd $REPO_DIR > /dev/null
 REPO_SHA=`git log -1 --oneline | awk '{ print $1 }'`
 
 if [ -z "${REPO_SHA}" ]; then
-  echo "could find no origin url, is ${REPO_DIR} really a git repository"
+  echo "could find no origin url, is ${REPO_DIR} really a git repository" >&2
   exit 102
 fi
 

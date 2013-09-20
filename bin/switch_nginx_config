@@ -1,7 +1,8 @@
 #! /usr/bin/env bash
-
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ${MY_DIR}/environment
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
 
 NGINX_CONF_FILE=${1:? You must provide the path to an nginx config}
 

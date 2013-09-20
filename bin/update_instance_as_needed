@@ -1,9 +1,12 @@
 #! /usr/bin/env bash
-
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ${MY_DIR}/environment
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
 
 INSTANCE_DIR=${1?You must provid an instance directory to check}
+#  expand any relative paths we come across
+INSTANCE_DIR=$( cd ${INSTANCE_DIR} ; pwd ;)
 LATEST_LINK=${INSTANCE_DIR}/latest_cloned
 if [ ! -e ${LATEST_LINK} ]; then
   echo "Unable to find latest indicator for instance ${INSTANCE_DIR}"
@@ -13,15 +16,18 @@ fi
 ${MY_DIR}/update_repo_as_needed test_only ${LATEST_LINK}
 # if it has updates (update_repo_as_needed returns 100)
 if [ $? == 100 ]; then
-  echo "Changes detected, fetching..."
-  pushd ${INSTANCE_DIR} > /dev/null
 
   REPO_URL=`${MY_DIR}/get_git_origin_url ${LATEST_LINK}`
   bail_on_error
+  log "using origin: ${REPO_URL} for update"
 
   NEW_INSTANCE_PATH=`${MY_DIR}/start_new_instance ${INSTANCE_DIR} ${REPO_URL}`
+  bail_on_error
+  log "instances started at ${INSTANCE_DIR}"
   
   switch_nginx_config $(gen_nginx_config ${NEW_INSTANCE_PATH})
+  bail_on_error
+  log "nginx config updated"
 fi
 
 # we leave the old instances in place so they can drain stop

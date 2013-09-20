@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+
+if [ "$1" == "-h" -o "$1" == "--help" ]; then
+  for cmd in ${MY_DIR}/*
+  do
+    echo `basename $cmd`
+  done
+else
+  if [ ! -f ${MY_DIR}/$1 ]; then
+    echo "Unknown approuter command: $1"
+    exit 100
+  fi
+  "$@"
+fi
