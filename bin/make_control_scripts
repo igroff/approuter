@@ -10,7 +10,7 @@ INSTANCE_GROUP_NAME=`basename ${APP_DIR}`
 
 # exit with a 100 if we have no start file
 if [ ! -f ./ar-start ]; then
-  echo "missing control file './start'"
+  log "missing control file './ar-start'"
   exit 100
 fi
 

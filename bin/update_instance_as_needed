@@ -17,12 +17,8 @@ if [ $? == 100 ]; then
   pushd ${INSTANCE_DIR} > /dev/null
 
   REPO_URL=`${MY_DIR}/get_git_origin_url ${LATEST_LINK}`
-  if [ $? != 0 ]; then
-    # get_git_origin_url should have provided a message
-    # and that message will be here:
-    echo ${REPO_URL}
-    exit 102
-  fi
+  bail_on_error
+
   NEW_INSTANCE_PATH=`${MY_DIR}/start_new_instance ${INSTANCE_DIR} ${REPO_URL}`
   
   switch_nginx_config $(gen_nginx_config ${NEW_INSTANCE_PATH})

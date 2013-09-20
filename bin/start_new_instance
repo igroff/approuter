@@ -16,7 +16,9 @@ if [ -x ar-install ]; then
   log "Running instance install script for: ${NEW_INSTANCE_NAME}"
   ./ar-install >&2
 fi
-NEW_INSTANCE_PORTS=`make_control_scripts ${NUM_INSTANCES}`
+NEW_INSTANCE_PORTS=$(make_control_scripts ${NUM_INSTANCES})
+bail_on_error ${NEW_INSTANCE_PORTS}
+
 if [ -f ${HC_CONF} ]; then
   HEALTH_CHECK_PATH=`cat ${HC_CONF}`
 fi
@@ -26,8 +28,10 @@ ln -fs ${START_NEW_INSTANCE_HERE}/$NEW_DIR ${START_NEW_INSTANCE_HERE}/active
 for port in $NEW_INSTANCE_PORTS
 do
   log "starting instance on port ${port}"
+  HC_URL="http://localhost:${port}${HEALTH_CHECK_PATH}"
+  log "checking instance health at: ${HC_URL}"
   #   wait for the instance to serve healthy, perp will have started it for us
-  ${APPROUTER_BIN_DIR}/http_ready "http://localhost:${port}${HEALTH_CHECK_PATH}"
+  ${APPROUTER_BIN_DIR}/http_ready ${HC_URL}
   #   if it doesn't come up normally.... log something and move on, we can only
   #   do so much and there may be something we're unaware of
   READY_RESULT=$?
