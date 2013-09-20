@@ -7,6 +7,7 @@ fi
 INSTANCE_DIR=${1?You must provid an instance directory to check}
 #  expand any relative paths we come across
 INSTANCE_DIR=$( cd ${INSTANCE_DIR} ; pwd ;)
+log "checking instance in ${INSTANCE_DIR} for updates"
 LATEST_LINK=${INSTANCE_DIR}/latest_cloned
 if [ ! -e ${LATEST_LINK} ]; then
   echo "Unable to find latest indicator for instance ${INSTANCE_DIR}"

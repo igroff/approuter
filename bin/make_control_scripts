@@ -3,14 +3,14 @@
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
-APP_DIR=${PWD}
+APP_DIR=${1}
 STARTING_PORT=9000
-NUM_INSTANCES=${1-1}
+NUM_INSTANCES=${2-1}
 INSTANCE_GROUP_NAME=`basename ${APP_DIR}`
 
 # exit with a 100 if we have no start file
-if [ ! -f ./ar-start ]; then
-  log "missing control file './ar-start'"
+if [ ! -f ${APP_DIR}/ar-start ]; then
+  log "missing control file '${APP_DIR}/ar-start'"
   exit 100
 fi
 

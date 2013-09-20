@@ -4,7 +4,14 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${MY_DIR}/environment
 
 silent_pushd ${PERP_BASE}
-find . -depth 1 | grep '[_+[[:alnum:]]]*_[[:digit:]]\{4,\}' \
-  | sed -e s[^\./[[g \
-  | sed -e 's/\(.*\)_\([[:digit:]]\{4,\}\)/\1 \2/g'
+if [ "$1" == "--name-only" ]; then
+  find . -depth 1 | grep '[_+[[:alnum:]]]*_[[:digit:]]\{4,\}' \
+    | sed -e s[^\./[[g \
+    | sed -e 's/\(.*\)_\([[:digit:]]\{4,\}\)/\1/g' \
+    | sort -u
+else
+  find . -depth 1 | grep '[_+[[:alnum:]]]*_[[:digit:]]\{4,\}' \
+    | sed -e s[^\./[[g \
+    | sed -e 's/\(.*\)_\([[:digit:]]\{4,\}\)/\1 \2/g'
+fi
 silent_popd

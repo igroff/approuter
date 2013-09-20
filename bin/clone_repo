@@ -7,7 +7,9 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
 fi
 
 REPO_URL=${1?You must provide a git repository URL}
-DEST_DIR_NAME=`date -u +"${INSTANCE_DATE_FORMAT}"`
+#  it's gonna be a time in the same TZ as the machine so it makes
+#  sense vs. other file dates and such
+DEST_DIR_NAME=`date +"${INSTANCE_DATE_FORMAT}"`
 
 if [ -d $DEST_DIR_NAME ]; then
   # destination directory already exists, try again later :)
@@ -16,7 +18,9 @@ if [ -d $DEST_DIR_NAME ]; then
   exit 100
 fi
 
+log "cloning repo ${REPO_URL} into new instance directory ${DEST_DIR_NAME}"
 git clone --quiet ${REPO_URL} ${DEST_DIR_NAME}
+rm -rf ./latest_cloned
 ln -sf ${DEST_DIR_NAME} latest_cloned
 # return the name of the directory into which we're cloning
 echo ${DEST_DIR_NAME}

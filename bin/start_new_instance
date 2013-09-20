@@ -3,20 +3,23 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
-
 START_NEW_INSTANCE_HERE=${1?You must provide a directory to start the instance in}
 REPO_URL=${2?You must provide a repository url for the instance}
 
+log "starting new instance(s) in ${START_NEW_INSTANCE_HERE}"
+
 silent_pushd ${START_NEW_INSTANCE_HERE}
-NEW_DIR=`clone_repo ${REPO_URL}`
-NEW_INSTANCE_NAME=${NEW_DIR}
-silent_pushd ${NEW_DIR}
+NEW_INSTANCE_NAME=`clone_repo ${REPO_URL}`
+NEW_INSTANCE_PATH=${START_NEW_INSTANCE_HERE}/${NEW_INSTANCE_NAME}
 # run the installation script
-if [ -x ar-install ]; then
+silent_pushd ${NEW_INSTANCE_PATH}
+if [ -x ./ar-install ]; then
   log "Running instance install script for: ${NEW_INSTANCE_NAME}"
   ./ar-install >&2
 fi
-NEW_INSTANCE_PORTS=$(make_control_scripts ${NUM_INSTANCES})
+
+# now that it's installed we'll make the control scripts
+NEW_INSTANCE_PORTS=$(make_control_scripts ${NEW_INSTANCE_PATH} ${NUM_INSTANCES})
 bail_on_error ${NEW_INSTANCE_PORTS}
 
 if [ -f ${HC_CONF} ]; then
@@ -24,7 +27,8 @@ if [ -f ${HC_CONF} ]; then
 fi
 # have perp look for, and start, our new instances
 perphup
-ln -fs ${START_NEW_INSTANCE_HERE}/$NEW_DIR ${START_NEW_INSTANCE_HERE}/active
+rm -f ${START_NEW_INSTANCE_HERE}/active
+ln -fs ${NEW_INSTANCE_PATH} ${START_NEW_INSTANCE_HERE}/active
 for port in $NEW_INSTANCE_PORTS
 do
   log "starting instance on port ${port}"
@@ -41,4 +45,4 @@ do
 done
 silent_popd
 silent_popd
-echo ${START_NEW_INSTANCE_HERE}/${NEW_INSTANCE_NAME}
+echo ${NEW_INSTANCE_PATH}
