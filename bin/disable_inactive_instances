@@ -5,8 +5,11 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
-
 for instance in `list_inactive_instance_names`
 do
-  chmod -t ${PERP_BASE}/$instance*
+  # shut down each instance port listener
+  for instance_port in `list_ports_for_instance_group ${instance}`
+  do
+    perpctl XD ${instance}_${instance_port}
+  done
 done

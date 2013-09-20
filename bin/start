@@ -44,10 +44,9 @@ bail_on_error
 switch_nginx_config `gen_nginx_config ${INSTANCE_PATH}`
 bail_on_error "there was a problem creating the nginx config"
 
-# make sure we update perp about nginx
+make_update_service_control_scripts
+bail_on_error "failure during creation of update service control scripts"
+
+# make sure we update perp about nginx, and our update service
 perphup
 
-if [ -z "${NO_CRONTAB_INSTALL}" ]; then
-  echo "installing crontab, just so you know..."
-  #crontab ${VAR_DIR}/crontab
-fi

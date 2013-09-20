@@ -1,0 +1,20 @@
+#! /usr/bin/env bash
+set -e
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+SERVICE_NAME="instance_update"
+UPDATE_CMD="${MY_DIR}/periodic_instance_update"
+
+mkdir -p ${PERP_BASE}/${SERVICE_NAME}
+cat ${TEMPLATE_DIR}/perp.rc.main | \
+  sed -e "s[{{start_cmd}}[${UPDATE_CMD}[g" |\
+  sed -e "s[{{env_settings_file}}[[g" |\
+  sed -e "s[{{change_to_dir}}[${MY_DIR}[g" \
+  > ${PERP_BASE}/${SERVICE_NAME}/rc.main
+cat ${TEMPLATE_DIR}/perp.rc.log | \
+  sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${SERVICE_NAME}/rc.log
+chmod +x ${PERP_BASE}/${SERVICE_NAME}/rc.*
+chmod +t ${PERP_BASE}/${SERVICE_NAME}
