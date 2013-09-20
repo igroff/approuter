@@ -51,8 +51,4 @@ mkdir -p ${PERP_BASE}
 mkdir -p ${LOG_DIR}
 mkdir -p ${RUN_DIR}
 
-export -f silent_pushd
-export -f silent_popd
-export -f log
-
 ENVIRONMENT_SOURCED=1
