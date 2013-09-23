@@ -5,7 +5,7 @@ ACTION=$1
 if [ "${ACTION}x" == "x" ]; then
   # we do expect to own the machine, so this is
   # reasonable
-  killall perpd
+  cat ${PERP_BASE}/.control/perpd.pid | xargs kill -TERM 
 else
   perpctl D ${ACTION}
 fi
