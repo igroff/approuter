@@ -1,7 +1,12 @@
 #! /usr/bin/env bash
 silent_pushd(){ pushd $1 > /dev/null 2>&1; }
 silent_popd(){ popd $1 > /dev/null 2>&1 ; }
-log(){ echo $1 >&2; }
+log(){ echo "$@" >&2; }
+debug() {
+  if [ -n "${AR_DEBUG}" ]; then
+    log "$@"
+  fi
+}
 
 bail_on_error(){
   ERROR_CODE=$?
@@ -13,6 +18,8 @@ bail_on_error(){
     exit ${ERROR_CODE}
   fi
 }
+
+debug "environment included from ${0}"
 
 ROOT=${APPROUTER_ROOT}
 MANAGED_ROOT=${ROOT}/managed
