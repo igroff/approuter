@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+INSTANCE_DIR=${1?You must provide an instance directory to load jobs from}
+
+if [ -d ${INSTANCE_DIR}/ar-jobs ]; then
+  log "installing jobs from ${INSTANCE_DIR}/ar-jobs"
+  ${MY_DIR}/shat_processor show ${INSTANCE_DIR}/ar-jobs/* >> ${VAR_DIR}/crontab
+else
+  debug "no jobs found for instance in ${INSTANCE_DIR}"
+fi

@@ -45,4 +45,5 @@ do
 done
 silent_popd
 silent_popd
+${MY_DIR}/schedule_jobs ${NEW_INSTANCE_PATH}
 echo ${NEW_INSTANCE_PATH}
