@@ -15,6 +15,7 @@ chmod +x ${RUNTIME_BIN_DIR}/*
 mkdir -p ${PERP_BASE}/nginx
 cat ${TEMPLATE_DIR}/perp.rc.main | \
   sed -e "s[{{start_cmd}}[nginx -c ${NGINX_CONF_LINK}[g" |\
+  sed -e "s[{{env_settings_file}}[[g" |\
   sed -e s[{{change_to_dir}}[${SBIN_DIR}[g  > ${PERP_BASE}/nginx/rc.main
 cat ${TEMPLATE_DIR}/perp.rc.log | \
   sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/nginx/rc.log
