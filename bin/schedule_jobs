@@ -12,5 +12,5 @@ if [ -d ${INSTANCE_DIR}/ar-jobs ]; then
   log "installing jobs from ${INSTANCE_DIR}/ar-jobs"
   ${MY_DIR}/shat_processor show ${INSTANCE_DIR}/ar-jobs/* >> ${VAR_DIR}/crontab
 else
-  debug "no jobs found for instance in ${INSTANCE_DIR}"
+  log "no jobs found for instance in ${INSTANCE_DIR}"
 fi
