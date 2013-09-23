@@ -1,11 +1,14 @@
 #! /usr/bin/env bash
 # vim: set ft=shell
+
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ${MY_DIR}/environment
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
 
 APP_DIR=${1}
 STARTING_PORT=9000
-NUM_INSTANCES=${2-1}
+NUM_INSTANCES=${2-${NUM_INSTANCES-1}}
 INSTANCE_GROUP_NAME=`basename ${APP_DIR}`
 
 # exit with a 100 if we have no start file

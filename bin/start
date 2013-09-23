@@ -1,24 +1,20 @@
 #! /usr/bin/env bash
 # vim: set ft=shell
 
+# start is the place where we will get our configuraiton from, so we check it first
+# so that we may have it ready for the environment to be set using the data provided
+if [ $# -ne 0 ]; then
+  export REPO_URL=${1?You must provide a git repository URL}
+  export NGINX_PORT=${2?You must provide a port for nginx to listen on} 
+  export NUM_INSTANCES=${3?You must provide a number of instances to prefork}
+fi
+# if the above configuration data was not set then it will have to exist in the
+# 'latest' config file. otherwise our environment setup will blow
+
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
-if [ $# == 0 -a -f ${CONF_ROOT}/latest ]; then
-  echo "using saved configuration"
-  source ${CONF_ROOT}/latest
-else
-  REPO_URL=${1?You must provide a git repository URL}
-  STARTING_PORT=${2?You must provide a port to listen on} 
-  NUM_INSTANCES=${3?You must provide a number of instances to prefork}
-fi
-
-[ -d ${CONF_ROOT} ] ||  mkdir ${CONF_ROOT}
-# save our settings for use in the future
-echo "export REPO_URL=${REPO_URL}" > ${CONF_ROOT}/latest
-echo "export STARTING_PORT=${STARTING_PORT}" >> ${CONF_ROOT}/latest
-echo "export NUM_INSTANCES=${NUM_INSTANCES}" >> ${CONF_ROOT}/latest
 
 # always start clean
 rm -rf ${GENERATED_CONF_DIR}/*
