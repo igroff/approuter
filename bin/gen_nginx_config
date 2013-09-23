@@ -40,7 +40,7 @@ if [ -z "${PROXY_AUTH}" ]; then
   # we've got a value for -i here because some systems expect it to not
   # be present (if you don't want it) and others expect it to be an empty
   # string.  Instead of variance, we'll just note that it's unused
-  sed -i ".unused.bak" -e '/access_by_lua_file/'D ${NGINX_CONF_FILE}
+  sed -i".unused.bak" -e '/access_by_lua_file/'D ${NGINX_CONF_FILE}
 fi
 cp ${TEMPLATE_DIR}/mime.types ${NGINX_CONF_ROOT}
 echo ${NGINX_CONF_FILE}
