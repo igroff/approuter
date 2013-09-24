@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+# only install the crontab if we have NOT been asked NOT to install
+# asking to not install the crontab is done by providing any value
+# for AR_NO_CRONTAB in the environment
+if [ -z "${AR_NO_CRONTAB}" ]; then
+  crontab ${VAR_DIR}/crontab
+fi
