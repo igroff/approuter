@@ -26,6 +26,7 @@ MANAGED_ROOT=${ROOT}/managed
 APPROUTER_BIN_DIR=${ROOT}/bin
 BUILD_ROOT=${ROOT}/build_output
 SBIN_DIR=${BUILD_ROOT}/sbin
+USR_SBIN_DIR=${BUILD_ROOT}/usr/sbin
 CONF_ROOT=${ROOT}/etc
 HC_CONF=${CONF_ROOT}/health_check.conf
 INSTANCE_GROUP_ROOT=${MANAGED_ROOT}/app_instances
