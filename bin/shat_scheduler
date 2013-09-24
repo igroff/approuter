@@ -81,9 +81,7 @@ function generate_for_file(){
 
   INVOCATION="\"${SCRIPT_PATH}\"${LOGGER}"
 
-  echo "# <created by shatcron id=\"${SHAT_ID}\">"
   echo "${CRON_EXP} ${INVOCATION}"
-  echo "# </created by shatcron>"
 }
 
 ACTION=show
