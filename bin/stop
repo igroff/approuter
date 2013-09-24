@@ -9,6 +9,7 @@ ACTION=$1
 if [ "${ACTION}x" == "x" ]; then
   log "shutting down approuter"
   cat ${PERP_BASE}/.control/perpd.pid | xargs kill -TERM 
+  ${MY_DIR}/uninstall_crontab
 else
   # there is no symmetry here, start doesn't support this type of
   # interface, individual service starts will have to be done manually

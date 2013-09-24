@@ -87,7 +87,7 @@ function generate_for_file(){
 ACTION=show
 
 case "${1}" in
-  "show"|"delete"|"add")
+  "show"|"add")
     ACTION="${1}"
     shift
     ;;
