@@ -24,7 +24,6 @@ rm -f  ${VAR_DIR}/run_data
 rm -rf ${RUNTIME_BIN_DIR}/*
 
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
-${MY_DIR}/gen_crontab
 
 chmod -R +x ${RUNTIME_BIN_DIR}
 perpd ${PERP_BASE} > ${LOG_DIR}/perpd.log 2>&1 &

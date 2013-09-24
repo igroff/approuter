@@ -11,12 +11,12 @@
 #  invoke the containing script.
 #
 #  For Example:
-#  shat_processor /usr/bin/shat_processor 
+#  shat_scheduler /usr/bin/shat_scheduler
 #  would create a crontab entry that looks something like this:
 #  * * * * 1 "/usr/bin/shat_scheduler" 2>&1 | logger -t "shatcron-shat_scheduler
 # 
 #  Note that the above example picks the last valid #@ entry it finds in
-#  the file.  So if you look further in this file, you'll see it's picked 
+#  the file.  So if you look further in THIS file, you'll see it's picked 
 #  the last #@ entry.
 #
 # commands
