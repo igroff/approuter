@@ -1,0 +1,8 @@
+#!/bin/sh
+if test ${1} = 'start' ; then
+  exec logger -t "${2}"
+else
+  echo "perp.rc.log ${@}"
+fi
+
+exit 0

@@ -14,7 +14,11 @@ cat ${TEMPLATE_DIR}/perp.rc.main | \
   sed -e "s[{{env_settings_file}}[[g" |\
   sed -e "s[{{change_to_dir}}[${MY_DIR}[g" \
   > ${PERP_BASE}/${SERVICE_NAME}/rc.main
-cat ${TEMPLATE_DIR}/perp.rc.log | \
-  sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${SERVICE_NAME}/rc.log
+if [ -n "${USE_SYSLOG}" ]; then
+  cp ${TEMPLATE_DIR}/perp.rc.syslog ${PERP_BASE}/${SERVICE_NAME}/rc.log
+else
+  cat ${TEMPLATE_DIR}/perp.rc.log | \
+    sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${SERVICE_NAME}/rc.log
+fi
 chmod +x ${PERP_BASE}/${SERVICE_NAME}/rc.*
 chmod +t ${PERP_BASE}/${SERVICE_NAME}
