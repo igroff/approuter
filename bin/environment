@@ -79,4 +79,9 @@ echo "export REPO_URL=${REPO_URL? Missing REPO_URL, something is wrong}" > ${LAT
 echo "export NGINX_PORT=${NGINX_PORT? Missing NGINX_PORT, something is wrong}" >> ${LATEST_CONF}
 echo "export NUM_INSTANCES=${NUM_INSTANCES? Missing NUM_INSTANCES, something is wrong}" >> ${LATEST_CONF}
 
+HEALTH_CHECK_PATH="/diagnostic"
+if [ -f "${HC_CONF}" ]; then
+  HEALTH_CHECK_PATH=`cat ${HC_CONF}`
+fi
+
 ENVIRONMENT_SOURCED=1

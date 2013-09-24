@@ -22,9 +22,6 @@ fi
 NEW_INSTANCE_PORTS=$(make_control_scripts ${NEW_INSTANCE_PATH} ${NUM_INSTANCES})
 bail_on_error ${NEW_INSTANCE_PORTS}
 
-if [ -f ${HC_CONF} ]; then
-  HEALTH_CHECK_PATH=`cat ${HC_CONF}`
-fi
 # have perp look for, and start, our new instances
 perphup
 rm -f ${START_NEW_INSTANCE_HERE}/active

@@ -6,9 +6,6 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
 
-if [ -f ${HC_CONF} ]; then
-  HEALTH_CHECK_PATH=`cat ${HC_CONF}`
-fi
 list_running_instances | while read instance port;
 do
   echo "Instance: ${instance} Port: ${port}"

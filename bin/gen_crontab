@@ -13,4 +13,3 @@ sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
 echo "SHELL=/bin/bash" > ${VAR_DIR}/crontab
 echo "@reboot cd ${ROOT} && source ./environment && start >> ${LOG_DIR}/start.log 2>&1" >> ${VAR_DIR}/crontab
 echo "0 * * * *   source ${ROOT}/environment && ${USR_SBIN_DIR}/logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
-echo "* * * * * cd ${ROOT} && source ./environment && ${MY_DIR}/update_instance_as_needed ${INSTANCE_GROUP_ROOT} >> ${LOG_DIR}/update_prod.log 2>&1" >> ${VAR_DIR}/crontab
