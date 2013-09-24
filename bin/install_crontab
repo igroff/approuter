@@ -10,5 +10,6 @@ fi
 # asking to not install the crontab is done by providing any value
 # for AR_NO_CRONTAB in the environment
 if [ -z "${AR_NO_CRONTAB}" ]; then
+  log "installing crontab"
   crontab ${VAR_DIR}/crontab
 fi
