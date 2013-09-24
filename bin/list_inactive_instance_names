@@ -3,7 +3,7 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
-ACTIVE_INSTANCE=$(find ${INSTANCE_GROUP_ROOT} -depth 1 -samefile ${INSTANCE_GROUP_ROOT}/active)
+ACTIVE_INSTANCE=$(find ${INSTANCE_GROUP_ROOT} -maxdepth 1 -samefile ${INSTANCE_GROUP_ROOT}/active)
 
 for instance in ${INSTANCE_GROUP_ROOT}/*
 do
