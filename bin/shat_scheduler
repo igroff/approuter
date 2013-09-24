@@ -55,17 +55,13 @@ function generate_for_file(){
   SCRIPT_DIR=`cd ${SCRIPT_DIR}; pwd`
   SCRIPT_PATH="${SCRIPT_DIR}/${SCRIPT_FILE}"
 
-  #     was playing with
-  # ^#@ ([[:digit:]*](/[[:digit:]*]{1,2})?\s*){5}$
-  #     but we're gonna just look for the shat instead
-
   if [ ! -f "${SCRIPT_PATH}" ]; then
     log "Couldn't find that file: ${1}" >&2
     exit 1
   fi
 
   #  looking for shats, we only return the last one we find if
-  #  there are more than one stripping off our indicator to leav only
+  #  there are more than one stripping off our indicator to leave only
   #  what is (hopefully) a valid cron expression
   CRON_EXP=`grep -E '^#@ .*$' "${SCRIPT_PATH}" | tail -n 1 | sed -e 's[^#@ [[g'`
 
@@ -84,18 +80,6 @@ function generate_for_file(){
   #   </setup logger>
 
   INVOCATION="\"${SCRIPT_PATH}\"${LOGGER}"
-
-  #   <generate indicator for cron entry>
-  if [ -n "`which md5`" ]; then
-    SHAT_ID=`echo "${INVOCATION}" | md5`
-  fi
-  if [ -z "${SHAT_ID}" -a -n "`which openssl`" ]; then
-    SHAT_ID=`echo "${INVOCATION}" | openssl md5 -hex | awk '{print $2}'`
-  fi
-  if [ -z "${SHAT_ID}" -a "`which cksum`" ]; then
-    SHAT_ID=`echo "${INVOCATION}" | cksum | sed -e 's[ [[g'`
-  fi
-  #   </generate indicator for cron entry>
 
   echo "# <created by shatcron id=\"${SHAT_ID}\">"
   echo "${CRON_EXP} ${INVOCATION}"
