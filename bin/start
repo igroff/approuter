@@ -7,6 +7,10 @@ if [ $# -ne 0 ]; then
   export REPO_URL=${1?You must provide a git repository URL}
   export NGINX_PORT=${2?You must provide a port for nginx to listen on} 
   export NUM_INSTANCES=${3?You must provide a number of instances to prefork}
+  if [ $# -eq 4 ]; then
+    # the last one is a branch we should use
+    export REPO_BRANCH=${4}
+  fi
 fi
 # if the above configuration data was not set then it will have to exist in the
 # 'latest' config file. otherwise our environment setup will blow

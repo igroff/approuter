@@ -43,6 +43,7 @@ LOGROTATE_CONF=${GENERATED_CONF_DIR}/logrotate.conf
 TEMPLATE_DIR=${ROOT}/templates
 INSTANCE_DATE_FORMAT="%Y-%m-%dT%H_%M_%S%z"
 INSTANCE_UPDATE_INTERVAL=60
+INSTANCE_UPDATE_SERVICE_NAME=instance_update
 LATEST_CONF=${CONF_ROOT}/latest
 NGINX_PIDFILE=${RUN_DIR}/nginx.pid
 NGINX_CONF_ROOT=${GENERATED_CONF_DIR}/nginx
@@ -78,6 +79,13 @@ fi
 echo "export REPO_URL=${REPO_URL? Missing REPO_URL, something is wrong}" > ${LATEST_CONF}
 echo "export NGINX_PORT=${NGINX_PORT? Missing NGINX_PORT, something is wrong}" >> ${LATEST_CONF}
 echo "export NUM_INSTANCES=${NUM_INSTANCES? Missing NUM_INSTANCES, something is wrong}" >> ${LATEST_CONF}
+
+# we'll consider repo branch a non standard option, and only save it if present
+# because there is a distinct difference between specifying a branch and not
+if [ -n "${REPO_BRANCH}" ]; then
+  echo "export REPO_BRANCH=${REPO_BRANCH}" >> ${LATEST_CONF}
+fi
+
 
 HEALTH_CHECK_PATH="/diagnostic"
 if [ -f "${HC_CONF}" ]; then

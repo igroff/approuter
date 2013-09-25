@@ -19,7 +19,13 @@ if [ -d $DEST_DIR_NAME ]; then
 fi
 
 log "cloning repo ${REPO_URL} into new instance directory ${DEST_DIR_NAME}"
-git clone --quiet ${REPO_URL} ${DEST_DIR_NAME}
+if [ -n "${REPO_BRANCH}" ]; then
+  log "Using requested branch ${REPO_BRANCH} instead of repo HEAD"
+  git clone --branch "${REPO_BRANCH}" --quiet ${REPO_URL} ${DEST_DIR_NAME}
+else
+  log "No branch specified, using repository HEAD"
+  git clone --quiet ${REPO_URL} ${DEST_DIR_NAME}
+fi
 rm -rf ./latest_cloned
 ln -sf ${DEST_DIR_NAME} latest_cloned
 # return the name of the directory into which we're cloning

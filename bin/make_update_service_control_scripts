@@ -5,7 +5,7 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
 
-SERVICE_NAME="instance_update"
+SERVICE_NAME="${INSTANCE_UPDATE_SERVICE_NAME}"
 UPDATE_CMD="${MY_DIR}/periodic_instance_update"
 
 mkdir -p ${PERP_BASE}/${SERVICE_NAME}
