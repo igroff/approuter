@@ -20,7 +20,7 @@ echo "}" >> ${UPSTREAM_CONF_FILE}
 NGINX_CONF_FILE=${NGINX_CONF_ROOT}/nginx.${INSTANCE_GROUP_NAME}.conf
 REPO_SHA=`get_git_current_sha ${INSTANCE_GROUP_PATH}`
 
-cat ${TEMPLATE_DIR}/nginx.conf | \
+cat ${NGINX_CONF_TEMPLATE} | \
   sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
   sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
   sed -e s[{{cache_dir}}[${CACHE_DIR}[g  | \

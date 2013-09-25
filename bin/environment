@@ -49,6 +49,8 @@ NGINX_PIDFILE=${RUN_DIR}/nginx.pid
 NGINX_CONF_ROOT=${GENERATED_CONF_DIR}/nginx
 NGINX_CONF_LINK=${GENERATED_CONF_DIR}/nginx/nginx.conf
 NGINX_CONF_FILE=${GENERATED_CONF_DIR}/nginx/nginx.conf
+NGINX_CONF_TEMPLATE=${ROOT}/templates/nginx.conf
+TEMPLATE_OVERRIDE_ROOT=${ROOT}/overrides
 
 mkdir -p ${GENERATED_CONF_DIR}
 mkdir -p ${INSTANCE_GROUP_ROOT}
@@ -86,10 +88,16 @@ if [ -n "${REPO_BRANCH}" ]; then
   echo "export REPO_BRANCH=${REPO_BRANCH}" >> ${LATEST_CONF}
 fi
 
-
 HEALTH_CHECK_PATH="/diagnostic"
 if [ -f "${HC_CONF}" ]; then
   HEALTH_CHECK_PATH=`cat ${HC_CONF}`
 fi
+
+# template overrides, if present
+if [ -f ${TEMPLATE_OVERRIDE_ROOT}/nginx.conf ]; then
+  NGINX_CONF_TEMPLATE=${TEMPLATE_OVERRIDE_ROOT}/nginx.conf
+fi
+  
+
 
 ENVIRONMENT_SOURCED=1
