@@ -1,6 +1,5 @@
 #! /usr/bin/env bash
 # vim: set ft=shell
-set -e
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
@@ -10,12 +9,19 @@ for instance in `list_inactive_instance_names`
 do
   for instance_port in ${PERP_BASE}/$instance*
   do
+    instance_port=`basename "${instance_port}"`
     #  un-sticky directories in here indicate disabled services
     #  we're trying to avoid removing anything that's actively managed
     #  by perp
-    if [ ! -k ${PERP_BASE}/$instance_port ]; then
-      rm -rf ${PERP_BASE}/$instance*
-      rm -rf ${INSTANCE_GROUP_ROOT}/$instance
+    if [ ! -k "${PERP_BASE}/$instance_port" ]; then
+      perpok "${instance_port}"
+      if [ $? -eq 1 ]; then
+        log "service ${instance_port} is inactive, removing it"
+        rm -rf ${PERP_BASE}/$instance_port
+        rm -rf ${INSTANCE_GROUP_ROOT}/$instance
+      else
+        log "service ${instance_port} is ACTIVE, REFUSING to remove"
+      fi
     fi
   done
 done
