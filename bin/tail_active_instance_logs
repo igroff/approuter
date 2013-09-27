@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+ACTIVE_INSTANCE_ROOT=$(find -L ${INSTANCE_GROUP_ROOT} -maxdepth 1 -samefile ${INSTANCE_GROUP_ROOT}/active | grep -v active | grep -v latest_cloned)
+
+ACTIVE_INSTANCE_NAME=$(basename "${ACTIVE_INSTANCE_ROOT}")
+
+tail -f ${LOG_DIR}/${ACTIVE_INSTANCE_NAME}*/current
