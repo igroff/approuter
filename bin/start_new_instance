@@ -18,6 +18,12 @@ if [ -x ./ar-install ]; then
   ./ar-install >&2
 fi
 
+# if we have anything to overlay we'll do it now
+if [ -d "${APPLICATION_OVERLAY}" ]; then
+  log "applying application overlay..."
+  cp -R "${APPLICATION_OVERLAY}"/* .
+fi
+
 # now that it's installed we'll make the control scripts
 NEW_INSTANCE_PORTS=$(make_control_scripts ${NEW_INSTANCE_PATH} ${NUM_INSTANCES})
 bail_on_error ${NEW_INSTANCE_PORTS}

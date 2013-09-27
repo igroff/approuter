@@ -26,6 +26,8 @@ So, in practice, with a simple interface addition ( adding a executable file cal
 - Control Files: Executable files in the root of the repository that Approuter uses to manage various stages of the application lifecycle
 - Jobs: Executables that are scheduled in the crontab of the user running Approuter using 'shat' notation.
 - shat: A convenient way to embed a cron schedule in a file using a shat '#@ ' followed by a valid cron schedule.
+- Application Overlay - What?
+- Overrides: What?
 
 
 ### How do I use it?
@@ -61,6 +63,9 @@ Use a dedicated user for Approuter, it expects this and is pretty liberal with t
         [+ +++ +++]  instance_update                uptime: 3567s/3567s  pids: 13191/13190
         [+ +++ +++]  nginx                          uptime: 3567s/3567s  pids: 13193/13192
 
+### Environment and Configuration
+
+* AR_NO_CRONTAB:
 
 ### Common Commands
 
