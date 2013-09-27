@@ -16,7 +16,7 @@ fi
 # for a given app instance determine if there are updates available
 ${MY_DIR}/update_repo_as_needed test_only ${LATEST_LINK}
 # if it has updates (update_repo_as_needed returns 100)
-if [ $? == 100 ]; then
+if [ $? == 100 -o "${2}" == "--force" ]; then
 
   REPO_URL=`${MY_DIR}/get_git_origin_url ${LATEST_LINK}`
   bail_on_error
