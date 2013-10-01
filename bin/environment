@@ -8,6 +8,8 @@ debug() {
   fi
 }
 
+error(){ echo "ERROR: $@" >&2; }
+
 bail_on_error(){
   ERROR_CODE=$?
   MESSAGE=$1
@@ -78,6 +80,13 @@ if [ -z "${REPO_URL}" -o -z "${NGINX_PORT}" -o -z "${NUM_INSTANCES}" ]; then
   source ${LATEST_CONF}
 fi
 
+if [ ${NUM_INSTANCES} -gt 50 ]; then
+  # This limit is a fourth of the max services that perp will manage thus 50
+  # would give us some room to upgrade and it's quite unlikely that anyone
+  # would actually intend to have more than 50 services
+  error "the max number of instances you can request is 50, you asked for ${NUM_INSTANCES}"
+  exit 11112
+fi
 # save our settings for use in the future
 echo "export REPO_URL=${REPO_URL? Missing REPO_URL, something is wrong}" > ${LATEST_CONF}
 echo "export NGINX_PORT=${NGINX_PORT? Missing NGINX_PORT, something is wrong}" >> ${LATEST_CONF}
