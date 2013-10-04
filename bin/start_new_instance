@@ -49,6 +49,5 @@ done
 silent_popd
 silent_popd
 ${MY_DIR}/gen_crontab
-${MY_DIR}/schedule_jobs ${NEW_INSTANCE_PATH}
 ${MY_DIR}/install_crontab
 echo ${NEW_INSTANCE_PATH}
