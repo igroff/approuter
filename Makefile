@@ -19,7 +19,8 @@ LUAJIT_LIB=${INSTALL_LOCATION}/lib
 LUAJIT_INC=${INSTALL_LOCATION}/include/luajit-2.0
 LUA_CRYPTO= ${INSTALL_LOCATION}/lib/crypto.la
 PKG_CONFIG_PATH=${INSTALL_LOCATION}/lib/pkgconfig:${INSTALL_LOCATION}/usr/local/ssl/lib/pkgconfig
-LOGROTATE=${INSTALL_LOCATION}/sbin/logrotate
+LOGROTATE=${INSTALL_LOCATION}/usr/sbin/logrotate
+LOGROTATE_ALT_LOC=${INSTALL_LOCATION}/sbin/logrotate
 .EXPORT_ALL_VARIABLES:
 
 ${OPEN_SSL}: ${NGINX} ${LUA} ${PERPD_EXECUTABLE} ${LOGROTATE}
@@ -51,6 +52,8 @@ ${INSTALL_LOCATION}:
 
 ${LOGROTATE}:
 	cd tmp/logrotate-3.8.3 && make && make install -e PREFIX=${INSTALL_LOCATION} -e INSTALL=install
+	([ ! -f "${LOGROTATE}" ] && ln -s ${LOGROTATE_ALT_LOC} ${LOGROTATE} ) || true
+	([ ! -f "${LOGROTATE_ALT_LOC}" ] && ln -s ${LOGROTATE} ${LOGROTATE_ALT_LOC} ) || true
 
 ${BUILD_ROOT}:
 	mkdir -p ${BUILD_ROOT}
