@@ -5,3 +5,4 @@ tmp/
 managed/*
 .todo
 .todo_complete
+etc/
