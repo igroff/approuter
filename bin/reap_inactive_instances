@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+${MY_DIR}/disable_inactive_instances
+${MY_DIR}/remove_inactive_instances
