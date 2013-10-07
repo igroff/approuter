@@ -52,7 +52,7 @@ Use a dedicated user for Approuter, it expects this and is pretty liberal with t
         $ source ./environment
 - Start your app
 
-        $ start https://github.com/intimonkey/approuter-test.git 8080 2
+        $ start_approuter https://github.com/intimonkey/approuter-test.git 8080 2
 
 - Check to see if it's running.  Once start of your app is done you should be able to 
 
@@ -105,7 +105,7 @@ is suggested) that Approuter is contained in the directory ~/approuter.
 
 ### Common Commands
 
-    start <repository url> <nginx port> [worker count] [branch]
+    start_approuter <repository url> <nginx port> [worker count] [branch]
 
 * repository url : a valid git url that contains the application source
 * nginx port : this is the port on which nginx will be listening for inbound requests.
@@ -114,11 +114,11 @@ is suggested) that Approuter is contained in the directory ~/approuter.
 
 <!-- -->
 
-    status
+    approuter_status
 
 Shows the status of all processes managed by approuter, ultimately this is just a view into processes managed by perpd.
 
-    stop
+    stop_approuter
 
 Shuts everything managed by approuter including removing the crontab.
 
