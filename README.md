@@ -132,7 +132,6 @@ stop and restart to take advantage of any changes.  The majority of the logic be
 
 ### Known issues
 
-- On OS X logrotate is built into a different directory than the cron job references, so the cron task will fail.  Since OS X is generally only used for development, it's left 'as-is'.
 - Will not work on Windows.
 - Known to work at all on Ubuntu 11.10, 12.04 LTS, OS X 10.8.5
 
