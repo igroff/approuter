@@ -20,6 +20,11 @@ echo "}" >> ${UPSTREAM_CONF_FILE}
 NGINX_CONF_FILE=${NGINX_CONF_ROOT}/nginx.${INSTANCE_GROUP_NAME}.conf
 REPO_SHA=`get_git_current_sha ${INSTANCE_GROUP_PATH}`
 
+# check and see if we have an override for the nginx template
+if [ -e "${INSTANCE_GROUP_PATH}/${INSTANCE_OVERRIDE_DIR_NAME}/nginx.conf" ]; then
+  NGINX_CONF_TEMPLATE="${INSTANCE_GROUP_PATH}/${INSTANCE_OVERRIDE_DIR_NAME}/nginx.conf"
+fi
+
 cat ${NGINX_CONF_TEMPLATE} | \
   sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
   sed -e s[{{log_dir}}[${LOG_DIR}[g  | \

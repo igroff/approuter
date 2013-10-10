@@ -53,7 +53,7 @@ NGINX_CONF_ROOT=${GENERATED_CONF_DIR}/nginx
 NGINX_CONF_LINK=${GENERATED_CONF_DIR}/nginx/nginx.conf
 NGINX_CONF_FILE=${GENERATED_CONF_DIR}/nginx/nginx.conf
 NGINX_CONF_TEMPLATE=${ROOT}/templates/nginx.conf
-TEMPLATE_OVERRIDE_ROOT=${CONF_ROOT}/overrides
+INSTANCE_OVERRIDE_DIR_NAME=ar-overrides
 APPLICATION_OVERLAY=${CONF_ROOT}/overrides/app_overlay
 
 mkdir -p ${GENERATED_CONF_DIR}
@@ -106,11 +106,6 @@ fi
 HEALTH_CHECK_PATH="/diagnostic"
 if [ -f "${HC_CONF}" ]; then
   HEALTH_CHECK_PATH=`cat ${HC_CONF}`
-fi
-
-# template overrides, if present
-if [ -f ${TEMPLATE_OVERRIDE_ROOT}/nginx.conf ]; then
-  NGINX_CONF_TEMPLATE=${TEMPLATE_OVERRIDE_ROOT}/nginx.conf
 fi
 
 ENVIRONMENT_SOURCED=1
