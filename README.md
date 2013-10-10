@@ -31,16 +31,18 @@ So, in practice, with a simple interface addition ( adding a executable file cal
 
 ### Application Interfaces
 
-- ar-start:
-- ar-install:
-- ar-jobs: A directory
-- ar-health.conf:
-- ar-overrides: A directory
+The Apprtouer Application Interface is the interface that Approuter will use to configure and manage the lifecycle of the application that it manages.
+
+- ar-start: (required) This is an executable file that needs to replace itself with the process of the running application (needs to exec the app) as it's final action.
+- ar-install: (optional) This is an executable file that is used to perform any setup or installation activities prior to starting instances of the application.  
+- ar-jobs: (optional) A directory containing executable scripts that can be scheduled (using cron). This directory will be searched on start for any executable files that contain a #@ 'shat' indicator.  The shat data will be used to schedule the execution of the script using cron.
+- ar-health.conf: (optional) A file containing a path that can be used to determine if the application is up and working normally.  This path should be the full path to a page that, when the application is up and healthy, will return a HTTP status of 200 e.g. /diagnostic.  If no health check is desired, adding an empty ar-health.conf file will cause the the health check to be skipped on start.  If the health check path is specified it MUST return a 200 to allow the application to be considered healthy and served, anything else will result in the application not being made available.
+- ar-overrides: A directory containing overrides for approuter configuration items.
+-- nginx.conf: If present in the ar-overrides directory will be used as the template for configuring NGINX used by Approuter.  Approuter expects the nginx.conf file to be a template allowing it to control certain values, see the templates/nginx.conf in the Approuter repository for template variables.
 
 ### How do I use it?
 
 Use a dedicated user for Approuter, it expects this and is pretty liberal with things like the crontab (in that it will remove the whole thing on shutdown).
-
 
 #### 'Installation'
 - Log into your box as the user you'd like to have run Approuter.
@@ -103,6 +105,12 @@ is suggested) that Approuter is contained in the directory ~/approuter.
 **managed/etc/perp** - This serves as the `PERP_BASE` for the instances of perpd that Approuter
    manages ( Approuter installs the man pages for perpd, and they are available when you
    have sourced the Approuter environment ).
+
+**templates/** - This directory contains templates of various files that Approuter will
+  use during it's operation to create various configuration and control files.
+
+**etc/** - Directory created at the root of the approuter environment that can contain
+  legacy configuration information, as well as state information used by Approuter.
 
 
 ### Environment and Configuration
