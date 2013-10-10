@@ -5,6 +5,7 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
 fi
 START_NEW_INSTANCE_HERE=${1?You must provide a directory to start the instance in}
 REPO_URL=${2?You must provide a repository url for the instance}
+HEALTH_CHECK_FAILURES=""
 
 log "starting new instance(s) in ${START_NEW_INSTANCE_HERE}"
 
@@ -35,19 +36,44 @@ ln -fs ${NEW_INSTANCE_PATH} ${START_NEW_INSTANCE_HERE}/active
 for port in $NEW_INSTANCE_PORTS
 do
   log "starting instance on port ${port}"
-  HC_URL="http://localhost:${port}${HEALTH_CHECK_PATH}"
-  log "checking instance health at: ${HC_URL}"
-  #   wait for the instance to serve healthy, perp will have started it for us
-  ${APPROUTER_BIN_DIR}/http_ready ${HC_URL}
-  #   if it doesn't come up normally.... log something and move on, we can only
-  #   do so much and there may be something we're unaware of
-  READY_RESULT=$?
-  if [ ${READY_RESULT} -ne 0 ]; then
-    log "failed waiting for http ready ${READY_RESULT}"
+  # allow for an instance to specify it's own health check path info by the
+  # inclusion of a file named 'ar-health.conf' in the root of the repository
+  if [ -e "${NEW_INSTANCE_PATH}/ar-health.conf" ]; then
+    HEALTH_CHECK_PATH=`cat "${NEW_INSTANCE_PATH}/ar-health.conf"`
+  fi
+  if [ -z "${HEALTH_CHECK_PATH}" ]; then
+    log "no health check configured, starting without verifying health"
+  else
+    HC_URL="http://localhost:${port}${HEALTH_CHECK_PATH}"
+    log "checking instance health at: ${HC_URL}"
+    #   wait for the instance to serve healthy, perp will have started it for us
+    ${APPROUTER_BIN_DIR}/http_ready ${HC_URL}
+    #   if it doesn't come up normally.... log something and move on, we can only
+    #   do so much and there may be something we're unaware of
+    READY_RESULT=$?
+    if [ ${READY_RESULT} -ne 0 ]; then
+      log "failed waiting for http ready ${READY_RESULT} on ${HC_URL}"
+      HEALTH_CHECK_FAILURES=True
+    fi
   fi
 done
-silent_popd
-silent_popd
-${MY_DIR}/gen_crontab
-${MY_DIR}/install_crontab
-echo ${NEW_INSTANCE_PATH}
+
+silent_popd  # NEW_INSTANCE_PATH
+silent_popd  # START_NEW_INSTANCE_HERE
+
+if [ -z "${HEALTH_CHECK_FAILURES}" ]; then
+  # if we had no health check failures noted, we'll just return the new instance
+  # that we started
+  echo ${NEW_INSTANCE_PATH}
+else
+  # we've had a health check failure of some kind
+  if [ -n "${IGNORE_HC_ERRORS}" ];
+    # we've been told to ignore health check errors so we'll return our 
+    # new instances that we've started but have failed health check
+    echo ${NEW_INSTANCE_PATH}
+  else
+    # health check failure, notify our caller
+    echo ${HEALTH_CHECK_FAILURES}
+    exit 110
+  fi  
+fi
