@@ -33,8 +33,9 @@ So, in practice, with a simple interface addition ( adding a executable file cal
 
 - ar-start:
 - ar-install:
-- ar-jobs:
+- ar-jobs: A directory
 - ar-health.conf:
+- ar-overrides: A directory
 
 ### How do I use it?
 
