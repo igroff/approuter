@@ -3,7 +3,8 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
-ACTIVE_INSTANCE=$(find -L ${INSTANCE_GROUP_ROOT} -maxdepth 1 -samefile ${INSTANCE_GROUP_ROOT}/active | grep -v active | grep -v latest_cloned)
+
+ACTIVE_INSTANCE=`readlink ${ACTIVE_INSTANCE_LINK}`
 
 for instance in ${INSTANCE_GROUP_ROOT}/*
 do
