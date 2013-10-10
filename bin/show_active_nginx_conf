@@ -1,6 +1,8 @@
 #! /usr/bin/env bash
-
+# vim: set ft=shell
 MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source ${MY_DIR}/environment
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
 
 cat ${NGINX_CONF_LINK}
