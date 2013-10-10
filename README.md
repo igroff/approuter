@@ -115,10 +115,25 @@ is suggested) that Approuter is contained in the directory ~/approuter.
 
 ### Environment and Configuration
 
-* `AR_NO_CRONTAB`:
-* `DEBUG`:
-* `USE_SYSLOG`:
-* `IGNORE_HC_ERRORS`:
+* `AR_NO_CRONTAB`: Causes the crontab installation to be skipped, so none of the
+  application jobs or Approuter management tasks will be installed.  This is intended
+  to simply be a development convenience.
+* `DEBUG`: Will cause additional debug information to be written during Approuter
+  execution
+* `USE_SYSLOG`:  Will cause application logs to be written to syslog instead of
+  individual files.  This is subject to all the normal caveats from using syslog, see
+  your individual syslog implementation for details
+* `IGNORE_HC_ERRORS`: If set to any non empty string value, this will cause the any
+  health check errors during start to be ignored.  Setting this value along with
+  configuring a health check path, will cause the health check to be performed but
+  any non 200 status results to be treated as if they were 200s and the application
+  served normally.  If this is set, and the application health check path does _not_ 
+  return a 200 the health check will still run until it times out and thus will
+  delay the serving of the application but it will still be served after the health
+  checks time out.  It's worth it to note that each application worker will be health
+  checked independently so if you request 4 'workers' the health check will have to 
+  run 4 times prior to the application instance being made available.
+
 
 ### Common Commands
 
