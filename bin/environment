@@ -112,7 +112,5 @@ fi
 if [ -f ${TEMPLATE_OVERRIDE_ROOT}/nginx.conf ]; then
   NGINX_CONF_TEMPLATE=${TEMPLATE_OVERRIDE_ROOT}/nginx.conf
 fi
-  
-
 
 ENVIRONMENT_SOURCED=1
