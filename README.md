@@ -29,6 +29,12 @@ So, in practice, with a simple interface addition ( adding a executable file cal
 - Application Overlay - What?
 - Overrides: What?
 
+### Application Interfaces
+
+- ar-start:
+- ar-install:
+- ar-jobs:
+- ar-health.conf:
 
 ### How do I use it?
 

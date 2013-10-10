@@ -99,6 +99,10 @@ if [ -n "${REPO_BRANCH}" ]; then
   echo "export REPO_BRANCH=${REPO_BRANCH}" >> ${LATEST_CONF}
 fi
 
+# this is solely for backwards compatability, allowing the specification of a
+# health check path outside the application, and defaulting to /diagnostic
+# the actual health check can be specified or disabled at the application
+# level as seen within the start_new_instance script
 HEALTH_CHECK_PATH="/diagnostic"
 if [ -f "${HC_CONF}" ]; then
   HEALTH_CHECK_PATH=`cat ${HC_CONF}`
