@@ -11,7 +11,8 @@ STARTING_PORT=9000
 NUM_INSTANCES=${2-${NUM_INSTANCES-1}}
 INSTANCE_GROUP_NAME=`basename ${APP_DIR}`
 
-# exit with a 100 if we have no start file
+# exit with a 100 if we have no start file, this is fatal as this is 
+# how we start the application
 if [ ! -f ${APP_DIR}/ar-start ]; then
   log "missing control file '${APP_DIR}/ar-start'"
   exit 100

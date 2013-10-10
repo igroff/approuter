@@ -102,6 +102,7 @@ is suggested) that Approuter is contained in the directory ~/approuter.
 
 * `AR_NO_CRONTAB`:
 * `DEBUG`:
+* `USE_SYSLOG`:
 
 ### Common Commands
 
