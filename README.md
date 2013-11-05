@@ -16,7 +16,7 @@ Handling things that are more than just conveniences like:
 - Clean installation of new versions. 
 - Remain agnostic of your application implementation: It's just a process to Approuter.
 
-So, in practice, with a simple interface addition ( adding a executable file called ar-start ) Approuter will spin up and manage whatever process is started, routing inbound requests to it as they are recieved, and seemlessly upgrading whenever changes are available.
+So, in practice, with a simple interface addition ( adding an executable file called ar-start ) Approuter will spin up and manage whatever process is started, routing inbound requests to it as they are recieved, and seemlessly upgrading whenever changes are available.
 
 ### Definitions
 
