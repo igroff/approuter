@@ -29,6 +29,9 @@ if [ $? == 100 -o "${2}" == "--force" ]; then
   switch_nginx_config $(gen_nginx_config ${NEW_INSTANCE_PATH})
   bail_on_error
   log "nginx config updated"
+
+  ${MY_DIR}/gen_crontab
+  ${MY_DIR}/install_crontab
 fi
 
 # we leave the old instances in place so they can drain stop
