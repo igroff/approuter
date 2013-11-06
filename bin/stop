@@ -1,18 +1,1 @@
-#! /usr/bin/env bash
-# vim: set ft=shell
-
-MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [ -z "${ENVIRONMENT_SOURCED}" ]; then
-  source ${MY_DIR}/environment
-fi
-ACTION=$1
-if [ "${ACTION}x" == "x" ]; then
-  log "shutting down approuter"
-  cat ${PERP_BASE}/.control/perpd.pid | xargs kill -TERM 
-  ${MY_DIR}/uninstall_crontab
-else
-  # there is no symmetry here, start doesn't support this type of
-  # interface, individual service starts will have to be done manually
-  log "shutting down service ${ACTION}"
-  perpctl D ${ACTION}
-fi
+stop_approuter

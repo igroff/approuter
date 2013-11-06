@@ -1,14 +1,1 @@
-#! /usr/bin/env bash
-# vim: set ft=shell
-
-MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-if [ -z "${ENVIRONMENT_SOURCED}" ]; then
-  source ${MY_DIR}/environment
-fi
-perpls > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-  echo "perpls: "
-  perpls
-else
-  echo "Nothing running"
-fi
+approuter_status
