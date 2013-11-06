@@ -1,0 +1,52 @@
+#! /usr/bin/env bash
+# vim: set ft=shell
+
+# start is the place where we will get our configuraiton from, so we check it first
+# so that we may have it ready for the environment to be set using the data provided
+if [ $# -ne 0 ]; then
+  export REPO_URL=${1?You must provide a git repository URL}
+  export NGINX_PORT=${2?You must provide a port for nginx to listen on} 
+  export NUM_INSTANCES=${3?You must provide a number of instances to prefork}
+  if [ $# -eq 4 ]; then
+    # the last one is a branch we should use
+    export REPO_BRANCH=${4}
+  fi
+fi
+# if the above configuration data was not set then it will have to exist in the
+# 'latest' config file. otherwise our environment setup will blow
+
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+# always start clean
+rm -rf ${GENERATED_CONF_DIR}/*
+rm -rf ${INSTANCE_GROUP_ROOT}/*
+rm -rf ${PERP_BASE}/*
+rm -f  ${VAR_DIR}/run_data
+rm -rf ${RUNTIME_BIN_DIR}/*
+
+chmod -R +x ${RUNTIME_BIN_DIR}
+perpd ${PERP_BASE} > ${LOG_DIR}/perpd.log 2>&1 &
+
+INSTANCE_PATH=`start_new_instance ${INSTANCE_GROUP_ROOT} ${REPO_URL}`
+bail_on_error "failed starting new instance: ${INSTANCE_PATH}"
+
+log "New instance started at: ${INSTANCE_PATH}"
+
+${MY_DIR}/gen_crontab
+${MY_DIR}/install_crontab
+
+${MY_DIR}/make_nginx_control_files
+bail_on_error
+# generate nginx config for new instance group
+switch_nginx_config `gen_nginx_config ${INSTANCE_PATH}`
+bail_on_error "there was a problem creating the nginx config"
+
+make_update_service_control_scripts
+bail_on_error "failure during creation of update service control scripts"
+
+# make sure we update perp about nginx, and our update service
+perphup
+
