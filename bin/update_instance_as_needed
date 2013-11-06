@@ -32,6 +32,7 @@ if [ $? == 100 -o "${2}" == "--force" ]; then
 
   ${MY_DIR}/gen_crontab
   ${MY_DIR}/install_crontab
+  ${MY_DIR}/gen_monit_config
 fi
 
 # we leave the old instances in place so they can drain stop

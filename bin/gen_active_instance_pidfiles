@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+INSTANCE_COUNT=0
+for pid in `list_active_instance_pids`
+do
+  INSTANCE_COUNT=`echo ${INSTANCE_COUNT}+1 | bc`
+  gen_instance_pidfile_name ${INSTANCE_COUNT}
+  echo $pid > ${RUN_DIR}/${INSTANCE_PIDFILE_NAME}
+  echo ${RUN_DIR}/${INSTANCE_PIDFILE_NAME}
+done

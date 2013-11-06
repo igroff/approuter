@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+for instance_pidfile in `gen_active_instance_pidfiles`
+do
+  INSTANCE_PIDFILE_NAME=`basename ${instance_pidfile}`
+  cat ${MONIT_CONF_TEMPLATE} | \
+    sed -e s[{{pidfile}}[${instance_pidfile}[g | \
+    sed -e s[{{email}}[${ALERT_EMAIL-test@changeme.com}[g  \
+    > ${GENERATED_CONF_DIR}/${INSTANCE_PIDFILE_NAME}.monit.conf
+done

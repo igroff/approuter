@@ -37,6 +37,7 @@ log "New instance started at: ${INSTANCE_PATH}"
 
 ${MY_DIR}/gen_crontab
 ${MY_DIR}/install_crontab
+${MY_DIR}/gen_monit_config
 
 ${MY_DIR}/make_nginx_control_files
 bail_on_error
