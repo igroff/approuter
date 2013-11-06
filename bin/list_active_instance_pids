@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+ACTIVE_INSTANCE_PATH=`readlink ${ACTIVE_INSTANCE_LINK}`
+ACTIVE_INSTANCE_PATH=`basename ${ACTIVE_INSTANCE_PATH}`
+perpls | \
+  grep ${ACTIVE_INSTANCE_PATH} | \
+  awk -F ' ' '{ printf("%s\n", $8) }' | \
+  sed -e 's/\/.*$//g'
