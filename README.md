@@ -31,18 +31,43 @@ So, in practice, with a simple interface addition ( adding an executable file ca
 
 ### Application Interfaces
 
-The Apprtouer Application Interface is the interface that Approuter will use to configure and manage the lifecycle of the application that it manages.
+The Apprtouer Application Interface is the interface that Approuter will use
+to configure and manage the lifecycle of the application that it manages.
 
-- ar-start: (required) This is an executable file that needs to replace itself with the process of the running application (needs to exec the app) as it's final action.
-- ar-install: (optional) This is an executable file that is used to perform any setup or installation activities prior to starting instances of the application.  
-- ar-jobs: (optional) A directory containing executable scripts that can be scheduled (using cron). This directory will be searched on start for any executable files that contain a #@ 'shat' indicator.  The shat data will be used to schedule the execution of the script using cron.
-- ar-health.conf: (optional) A file containing a path that can be used to determine if the application is up and working normally.  This path should be the full path to a page that, when the application is up and healthy, will return a HTTP status of 200 e.g. /diagnostic.  If no health check is desired, adding an empty ar-health.conf file will cause the the health check to be skipped on start.  If the health check path is specified it MUST return a 200 to allow the application to be considered healthy and served, anything else will result in the application not being made available.
-- ar-overrides: A directory containing overrides for approuter configuration items.
--- nginx.conf: If present in the ar-overrides directory will be used as the template for configuring NGINX used by Approuter.  Approuter expects the nginx.conf file to be a template allowing it to control certain values, see the templates/nginx.conf in the Approuter repository for template variables.
+- ar-start: (required) This is an executable file that needs to replace itself
+with the process of the running application (needs to exec the app) as it's
+final action.  This should limit itself to the a bare minimum to start the app
+setting environment variables is reasonable and likely, all significant setup
+and install actions should be handled in ar-install.
+- ar-install: (optional) This is an executable file that is used to perform
+any setup or installation activities prior to starting instances of the
+application.  This installation takes place once per application version prior
+to starting any workers, any modification of the environment or installation of
+packages should be done here. This is the place to do 'one time setup'
+operations prior to starting.
+- ar-jobs: (optional) A directory containing executable scripts that can be
+scheduled (using cron). This directory will be searched on start for any
+executable files that contain a #@ 'shat' indicator.  The shat data will be
+used to schedule the execution of the script using cron.
+- ar-health.conf: (optional) A file containing a path that can be used to
+determine if the application is up and working normally.  This path should be
+the full path to a page that, when the application is up and healthy, will
+return a HTTP status of 200 e.g. /diagnostic.  If no health check is desired,
+adding an empty ar-health.conf file will cause the the health check to be
+skipped on start.  If the health check path is specified it MUST return a 200
+to allow the application to be considered healthy and served, anything else
+will result in the application not being made available.
+- ar-overrides: A directory containing overrides for approuter configuration
+items.
+- nginx.conf: If present in the ar-overrides directory will be used as the
+template for configuring NGINX used by Approuter.  Approuter expects the
+nginx.conf file to be a template allowing it to control certain values, see
+the templates/nginx.conf in the Approuter repository for template variables.
 
 ### How do I use it?
 
-Use a dedicated user for Approuter, it expects this and is pretty liberal with things like the crontab (in that it will remove the whole thing on shutdown).
+Use a dedicated user for Approuter, it expects this and is pretty liberal with
+things like the crontab (in that it will remove the whole thing on shutdown).
 
 #### 'Installation'
 - Log into your box as the user you'd like to have run Approuter.
@@ -158,7 +183,6 @@ Shuts everything managed by approuter including removing the crontab.
 
 Fetches any changes to the approuter code. It's safest to assume that you'd need to
 stop and restart to take advantage of any changes.  The majority of the logic behind approuter is managed in shell scripts so there's generally no need to rebuild (`make`).
-
 
 ### Known issues
 
