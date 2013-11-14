@@ -20,6 +20,23 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
 
+# make sure it appears as if we've completed the install so we can otherwise
+# provide some more helpful feedback
+if [ ! -d ${APPROUTER_ROOT}/build_output ]; then
+  error "It appears as if approuter hasn't been built. Need to 'make' first."
+  exit 1001
+fi
+
+# now we need to see if we have access to the requestd NGINX port, the
+# checking finds the next one after the provided port so we have to decr. to
+# get it to check the requested one
+PORT_CHECK_START=`echo ${NGINX_PORT}-1 | bc`
+NEXT_AVAILABLE_PORT=`${MY_DIR}/find_next_available_port ${PORT_CHECK_START}`
+if [ "${NEXT_AVAILABLE_PORT}" != "${NGINX_PORT}" ]; then
+  error "Requested NGINX port ${NGINX_PORT} is in use, not starting"
+  exit 1002
+fi
+
 # always start clean
 rm -rf ${GENERATED_CONF_DIR}/*
 rm -rf ${INSTANCE_GROUP_ROOT}/*
