@@ -2,13 +2,14 @@
 silent_pushd(){ pushd $1 > /dev/null 2>&1; }
 silent_popd(){ popd $1 > /dev/null 2>&1 ; }
 log(){ echo "$@" >&2; }
+log_divider() { echo "******************************************" >&2; }
+error(){ echo "ERROR: $@" >&2; }
 debug() {
   if [ -n "${AR_DEBUG}" ]; then
     log "$@"
   fi
 }
 
-error(){ echo "ERROR: $@" >&2; }
 
 bail_on_error(){
   ERROR_CODE=$?

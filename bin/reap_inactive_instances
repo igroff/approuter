@@ -5,6 +5,29 @@ MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
+# the bulk of the following is overly abundant logging to help track down
+# a potential issue
+log_divider
+log_divider
+log "status"
+${MY_DIR}/approuter_status
+log_divider
 
+log "active instance names:"
+${MY_DIR}/list_active_instance_names
+log_divider
+
+log "inactive instance names:"
+${MY_DIR}/list_inactive_instance_names
+log_divider
+
+log "disabling inactive instances"
 ${MY_DIR}/disable_inactive_instances
+log "removing disabled inactive instances"
 ${MY_DIR}/remove_inactive_instances
+log_divider
+
+log "status"
+${MY_DIR}/approuter_status
+log_divider
+log_divider
