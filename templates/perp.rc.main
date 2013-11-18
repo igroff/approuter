@@ -10,6 +10,17 @@ if [ $1 == "start" ]; then
   pushd {{change_to_dir}} > /dev/null
   pushd .. >> /dev/null
   popd >> /dev/null
+
+  # we're gonna schedule an update of our instance pid files since at this
+  # point we're about to start a service with a new pid
+  echo "#! /usr/bin/env bash" > {{temp_dir}}/${PERP_SVPID}_update_pidfiles
+  echo "{{approuter_bin_dir}}/gen_active_instance_pidfiles" >> \
+    {{temp_dir}}/${PERP_SVPID}_update_pidfiles
+  # and, we drop it into the command dir... if this fails it's cuz it's 
+  # already there.  Since this command is stateless from command perspective
+  # it doesn't matter.
+  mv {{temp_dir}}/${PERP_SRVPID}_update_pidfiles {{command_dir}}/update_pidfiles
+
   exec {{start_cmd}}
 else
   echo "perp.rc.main $@"

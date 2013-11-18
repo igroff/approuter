@@ -40,6 +40,11 @@ HC_CONF=${CONF_ROOT}/health_check.conf
 INSTANCE_GROUP_ROOT=${MANAGED_ROOT}/app_instances
 ACTIVE_INSTANCE_LINK=${INSTANCE_GROUP_ROOT}/active
 VAR_DIR=${MANAGED_ROOT}/var
+# I don't really like putting it here, but were already a bit mixed with the
+# ar logs and the app logs in under managed/var/log structure.
+# this is the directory that will be watched for our async command processing
+# allowing ar to execute things outside the normal application flow
+COMMAND_DIR=${VAR_DIR}/ar_commands
 NGINX_CACHE_DIR=${VAR_DIR}/cache/nginx
 LOG_DIR=${VAR_DIR}/log
 RUN_DIR=${VAR_DIR}/run
@@ -73,6 +78,7 @@ mkdir -p ${PERP_BASE}
 mkdir -p ${LOG_DIR}
 mkdir -p ${RUN_DIR}
 mkdir -p ${CONF_ROOT}
+mkdir -p ${COMMAND_DIR}
 
 # conveniently we allow for storing off the last used configuration to allow
 # for subsequent starts to be called without any parameters

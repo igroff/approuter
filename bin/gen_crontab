@@ -13,6 +13,7 @@ sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
 echo "SHELL=/bin/bash" > ${VAR_DIR}/crontab
 echo "@reboot cd ${ROOT} && source ./environment && start >> ${LOG_DIR}/start.log 2>&1" >> ${VAR_DIR}/crontab
 echo "0 * * * * cd ${ROOT} && source ${ROOT}/environment && ${USR_SBIN_DIR}/logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
+echo "* * * * * cd ${ROOT} && source ${ROOT}/environment && ${APPROUTER_BIN_DIR}/process_command_queue ${COMMAND_DIR} >> ${LOG_DIR}/process_command_queue.log 2>&1" >> ${VAR_DIR}/crontab
 # we're gonna attempt once a day to clean up any inactive instances
 echo "0 23 * * * cd ${ROOT} && source ${ROOT}/environment && ${APPROUTER_BIN_DIR}/reap_inactive_instances >> ${LOG_DIR}/reaper.log 2>&1" >> ${VAR_DIR}/crontab
 
