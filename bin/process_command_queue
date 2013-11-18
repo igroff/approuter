@@ -1,1 +1,115 @@
-/Users/iangroff/Development/shell/work_queue/process
+#! /usr/bin/env bash
+# vim: set ft=sh
+
+##############################################################################
+# This script operates on a specified 'Queue Directory' looking for executable
+# files within and, when found, executing those files moving them off into
+# a sub directory named .processed.  The log of the file execution will be 
+# kept along side the file executed in the .processed directory.
+#
+# When a executable file from the queue directory (from here on referred to as
+# a 'command') is executed, the execution is assigned an id using the current
+# number of seconds since the epoch (as from date +"%s") plus the PID of the
+# script processing the command (an instance of this script).
+#
+# This script attempts to avoid to allow having multiple instances processing
+# the same command simultaneously by using directory based locking, storing
+# the locks within a .locks directory (a child of the queue directory).
+#
+# Output from the execution of this script, and the commands it is managing 
+# the execution of will be sent to the stdout of the process executing this
+# script.
+#
+# Queue Directory Structure
+#
+# - Queue Directory
+# - .processed
+# - - <id>_<original exe file name>
+# - - <id>_<original exe file name>.log
+# - .locks
+# - executable file(s)
+##############################################################################
+
+exec 2>&1
+
+QUEUE_DIR=${1}
+
+INVALID_QDIR_PARAM=100
+BAD_QUEUE_DIR=101
+
+if [ -z "${QUEUE_DIR}" ]; then
+  echo "$(basename ${0}) <queue_directory>"
+  echo "  queue_directory - the directory containing commands to be processed"
+  echo
+  echo "you must provide a queue directory"
+  exit $INVALID_QDIR_PARAM
+fi
+
+if [ ! -d ${QUEUE_DIR} ]; then
+  echo "You must provide a valid directory for the queue directory."
+  exit $BAD_QUEUE_DIR
+fi
+
+function write_log() {
+  if [ -n "$2" ]; then
+    echo "`date +'%m-%d-%Y %H:%M:%S'` $1" | tee -a $2;
+  else
+    echo "`date +'%m-%d-%Y %H:%M:%S'` $1";
+  fi
+ }
+function warn() { write_log "[WARN] $1" $2; }
+function debug() {
+  if [ -n "${DEBUG}" ]; then
+    write_log "[DEBUG] $1" $2;
+  fi
+}
+function info() { write_log "[INFO] $1" $2; }
+function log_separator() {
+  write_log "**********************************************************";
+}
+
+# get the absolute path
+QUEUE_DIR=$(cd ${QUEUE_DIR} && pwd)
+
+# a place to store the comands that have been processed
+PROCESSED_DIR=${QUEUE_DIR}/.processed
+mkdir -p ${PROCESSED_DIR}
+
+info "processing queue directory: ${QUEUE_DIR}"
+for file in ${QUEUE_DIR}/*; do
+  COMMAND_INSTANCE_ID=$$-`date +"%s"`
+  COMMAND_LOG_PATH=${QUEUE_DIR}/.processed/${COMMAND_INSTANCE_ID}.log
+  COMMAND_LOCK_PATH=${QUEUE_DIR}/${COMMAND_INSTANCE_ID}.lock
+  file_name=`basename ${file}`
+  if [ -d "${file}" ]; then
+    warn "skipping directory in queue dir: ${file_name}"
+    continue
+  fi
+  if [ ! -x "$file" ]; then
+    warn "skipping non executable file in queue dir: ${file_name}"
+    continue
+  fi
+
+  # attempt to lock our command so we can avoid multiple instances processing
+  # the same command, if we can't successfully create the lock we'll log
+  # and continue as this normally indicates that the command is already being
+  # processed
+  mkdir $COMMAND_LOCK_PATH
+  if [ ! $? -eq 0 ]; then
+    debug "using lockfile ${LOCK_PATH} for command ${file_name}"
+    warn "unable to lock command ${file_name} for execution"
+    continue
+  fi
+  
+  log_separator
+  info "processing command: ${file_name}, Instance ID: ${COMMAND_INSTANCE_ID}" "$COMMAND_LOG_PATH"
+  ${file} | tee -a $COMMAND_LOG_PATH
+  COMMAND_EXIT_CODE=$?
+  mv $file ${PROCESSED_DIR}/${COMMAND_INSTANCE_ID}_${file_name}
+  info "finished processing command: ${file_name}, status: ${COMMAND_EXIT_CODE}" "${COMMAND_LOG_PATH}"
+  log_separator
+
+  rm -rf $COMMAND_LOCK_PATH
+  # just to keep our processed comand file names unique
+  sleep 1
+done
