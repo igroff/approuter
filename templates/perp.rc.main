@@ -8,7 +8,6 @@ if [ $1 == "start" ]; then
     [ -f {{env_settings_file}} ] && source {{env_settings_file}}
   fi
   pushd {{change_to_dir}} > /dev/null
-  # make a link to show which one is running
   pushd .. >> /dev/null
   popd >> /dev/null
   exec {{start_cmd}}
