@@ -4,6 +4,7 @@ silent_popd(){ popd $1 > /dev/null 2>&1 ; }
 log(){ echo "$@" >&2; }
 log_divider() { echo "******************************************" >&2; }
 error(){ echo "ERROR: $@" >&2; }
+warn(){ echo "WARN: $@" >&2; }
 debug() {
   if [ -n "${AR_DEBUG}" ]; then
     log "$@"

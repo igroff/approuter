@@ -9,6 +9,9 @@ NGINX_CONF_FILE=${1:? You must provide the path to an nginx config}
 ln -sf ${NGINX_CONF_FILE} ${NGINX_CONF_LINK}
 # forcing a reload of the nginx config, causing a graceful
 # 'roll' from the old instance to the new
-if [ -f ${NGINX_PIDFILE} ]; then
+if [ -f "${NGINX_PIDFILE}" ]; then
+  log "switching config for NGINX instance with pid `cat ${NGINX_PIDFILE}`"
   kill -s HUP `cat ${NGINX_PIDFILE}`
+else
+  warn "NO NGINX pidfile at ${NGINX_PIDFILE}, NO config switch done, this is expected on 'start'" 
 fi
