@@ -27,6 +27,8 @@ if [ ! -d ${APPROUTER_ROOT}/build_output ]; then
   exit 1001
 fi
 
+die_if_perpd_running
+
 # now we need to see if we have access to the requestd NGINX port, the
 # checking finds the next one after the provided port so we have to decr. to
 # get it to check the requested one

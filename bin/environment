@@ -28,6 +28,9 @@ gen_instance_pidfile_name(){
   INSTANCE_PIDFILE_NAME=activeInstance_${INSTANCE_ID}.pid
 }
 
+# not all the error codes are here yet, but you gotta start somewhere
+ERR_PERPD_RUNNING=254
+
 debug "environment included from ${0}"
 
 ROOT=${APPROUTER_ROOT}
@@ -115,5 +118,15 @@ HEALTH_CHECK_PATH="/diagnostic"
 if [ -f "${HC_CONF}" ]; then
   HEALTH_CHECK_PATH=`cat ${HC_CONF}`
 fi
+
+die_if_perpd_running(){
+  PERPD_PID_FILE=${PERP_BASE}/.control/perpd.pid
+  if [ -r ${PERPD_PID_FILE} ]; then
+    PERPD_PID=$(cat ${PERPD_PID_FILE})
+    ps o pid | grep ${PERPD_PID} >> /dev/null 2>&1
+    [ $? -eq 0 ] && error "perpd already running, refusing to start" && \
+       exit ${ERR_PERPD_RUNNING}
+  fi
+}
 
 ENVIRONMENT_SOURCED=1
