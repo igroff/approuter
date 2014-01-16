@@ -28,6 +28,18 @@ gen_instance_pidfile_name(){
   INSTANCE_PIDFILE_NAME=activeInstance_${INSTANCE_ID}.pid
 }
 
+basename_no_extension(){
+  FILE_PATH=$1
+  EXTENSION=$2
+  echo "$OSTYPE" | grep -i darwin >> /dev/null
+  IS_OSX=$?
+  if [ $IS_OSX -eq 0 ]; then
+    basename -s "${EXTENSION}" "${FILE_PATH}"
+  else
+    basename "${FILE_PATH}" "${EXTENSION}"
+  fi
+}
+
 # not all the error codes are here yet, but you gotta start somewhere
 ERR_PERPD_RUNNING=254
 

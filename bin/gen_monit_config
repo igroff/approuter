@@ -6,7 +6,7 @@ fi
 
 for instance_pidfile in `gen_active_instance_pidfiles`
 do
-  INSTANCE_NAME=`basename -s .pid ${instance_pidfile}`
+  INSTANCE_NAME=`basename_no_extension ${instance_pidfile} .pid`
   INSTANCE_PIDFILE_NAME=`basename ${instance_pidfile}`
   cat ${MONIT_CONF_TEMPLATE} | \
     sed -e s[{{pidfile}}[${instance_pidfile}[g | \
