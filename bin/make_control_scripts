@@ -34,6 +34,9 @@ do
     > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
   if [ -n "${USE_SYSLOG}" ]; then
     cp ${TEMPLATE_DIR}/perp.rc.syslog ${PERP_BASE}/${INSTANCE_NAME}/rc.log
+  elif [ -n "${USE_SERVICELOG}" ]; then
+    cat ${TEMPLATE_DIR}/perp.rc.servicelog | \
+      sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log
   else
     cat ${TEMPLATE_DIR}/perp.rc.log | \
       sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${INSTANCE_NAME}/rc.log

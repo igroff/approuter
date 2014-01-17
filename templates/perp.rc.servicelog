@@ -1,0 +1,8 @@
+#!/bin/sh
+if test ${1} = 'start' ; then
+  exec cat >> "{{log_dir}}/service.log"
+else
+  echo "perp.rc.log ${@}"
+fi
+
+exit 0
