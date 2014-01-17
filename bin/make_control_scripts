@@ -32,6 +32,11 @@ do
     sed -e "s[{{approuter_bin_dir}}[${APPROUTER_BIN_DIR}[g" |\
     sed -e "s[{{change_to_dir}}[${APP_DIR}[g" \
     > ${PERP_BASE}/${INSTANCE_NAME}/rc.main
+  # setup our log handlers, we've got a couple options available and here
+  # we'll be chosing the right one.
+  # default - tinylog 
+  # options to use syslog, or have all the output go to a single file or
+  # 'servicelog'
   if [ -n "${USE_SYSLOG}" ]; then
     cp ${TEMPLATE_DIR}/perp.rc.syslog ${PERP_BASE}/${INSTANCE_NAME}/rc.log
   elif [ -n "${USE_SERVICELOG}" ]; then
