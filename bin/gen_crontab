@@ -6,10 +6,17 @@ if [ -z "${ENVIRONMENT_SOURCED}" ]; then
   source ${MY_DIR}/environment
 fi
 
-# generate our logrotate conf and crontab entry
 
+# if we have a logrotate.conf override for the instance, we'll use that
+# as the template
+if [ -r "${INSTANCE_GROUP_PATH}/${INSTANCE_OVERRIDE_DIR_NAME}/logrotate.conf" ]; then
+  LOGROTATE_CONF_TEMPLATE="${INSTANCE_GROUP_PATH}/${INSTANCE_OVERRIDE_DIR_NAME}/logrotate.conf"
+fi
+
+# generate the logrotate.conf
 sed -e s[{{log_dir}}[${LOG_DIR}[g ${LOGROTATE_CONF_TEMPLATE} > ${LOGROTATE_CONF}
 
+# and our crontab
 echo "SHELL=/bin/bash" > ${VAR_DIR}/crontab
 echo "@reboot bash -l -c 'cd ${ROOT} && source ./environment && start >> ${LOG_DIR}/start.log 2>&1'" >> ${VAR_DIR}/crontab
 echo "0 * * * * cd ${ROOT} && source ${ROOT}/environment && ${USR_SBIN_DIR}/logrotate --state ${VAR_DIR}/logrotate.state ${LOGROTATE_CONF}" >> ${VAR_DIR}/crontab
