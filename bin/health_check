@@ -10,6 +10,10 @@ if [ $# -ne 0 ]; then
   EXTRA_PARAMS="$@"
 fi
 
+if [ -e "${ACTIVE_INSTANCE_LINK}/ar-health.conf" ]; then
+  HEALTH_CHECK_PATH=`cat "${ACTIVE_INSTANCE_LINK}/ar-health.conf"`
+fi
+
 list_running_instances | while read instance port;
 do
   echo "Instance: ${instance} Port: ${port}"
