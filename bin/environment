@@ -78,6 +78,8 @@ NGINX_CONF_TEMPLATE=${ROOT}/templates/nginx.conf
 INSTANCE_OVERRIDE_DIR_NAME=ar-overrides
 APPLICATION_OVERLAY=${CONF_ROOT}/overrides/app_overlay
 MONIT_CONF_TEMPLATE=${ROOT}/templates/monit.conf
+# default to our new single log configuration
+USE_SERVICE_LOG=${USE_SERVICE_LOG-true}
 
 mkdir -p ${GENERATED_CONF_DIR}
 mkdir -p ${INSTANCE_GROUP_ROOT}
