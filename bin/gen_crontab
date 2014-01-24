@@ -23,4 +23,5 @@ echo "0 * * * * cd ${ROOT} && source ${ROOT}/environment && ${USR_SBIN_DIR}/logr
 # we're gonna attempt once a day to clean up any inactive instances
 echo "0 23 * * * cd ${ROOT} && source ${ROOT}/environment && ${APPROUTER_BIN_DIR}/reap_inactive_instances >> ${LOG_DIR}/reaper.log 2>&1" >> ${VAR_DIR}/crontab
 
+# finally we want to schedule any jobs we find in ar-jobs
 ${MY_DIR}/schedule_jobs `readlink ${INSTANCE_GROUP_ROOT}/active`
