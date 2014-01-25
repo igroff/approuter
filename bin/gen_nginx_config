@@ -28,7 +28,7 @@ fi
 cat ${NGINX_CONF_TEMPLATE} | \
   sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
   sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
-  sed -e s[{{cache_dir}}[${CACHE_DIR}[g  | \
+  sed -e s[{{cache_dir}}[${NGINX_CACHE_DIR}[g  | \
   sed -e s[{{temp_dir}}[${TEMP_DIR}[g  | \
   sed -e s[{{listen_port}}[${NGINX_PORT}[g  | \
   sed -e s[{{storage_root}}[${ID_MAP_ROOT}[g  | \
