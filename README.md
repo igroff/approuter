@@ -158,7 +158,40 @@ is suggested) that Approuter is contained in the directory ~/approuter.
   checks time out.  It's worth it to note that each application worker will be health
   checked independently so if you request 4 'workers' the health check will have to 
   run 4 times prior to the application instance being made available.
+* `USE_SERVICE_LOG`: The traditionaly way that Approuter handled logging was to
+  have a directory under managed/var/log for each process running a given
+  service (e.g. managed/var/log/2014-01-29T16\_11\_08-0500\_9001 ) within which
+  the active log was named 'current' and others were timestamped and rolled.
+  The new default is to use a single log named service (i.e.
+  /managed/var/log/service.log) to which all the active services will log.  If
+  this is _not_ desired (i.e. the old behaviour is desired) set this value to
+  null.
 
+### Caching
+  As a convenience Approuter provides some path prefixes that it will listen
+  to allowing for the caching and serving of cached responses. The paths start
+  with cacheNU, where N is a numeric value and U is the units. Currently the
+  available cache prefixes are as follows:
+
+  * cache1h
+  * cache2h
+  * cache4h
+  * cache365d
+  
+  These path prefixes can simply be used at the head of your existing paths to
+  allow for caching.
+
+  original request:
+
+          http://approuter.host.example/my/app/index.html
+
+  cached:
+
+         http://approuter.host.example/cache1h/my/app/index.html
+  
+  When requesting a chaced version of an existing endpoing, you will also
+  recieve an X-Cache-Status header in the response with a value of HIT or
+  MISS according to the use of the cache in servicing the request.
 
 ### Common Commands
 
@@ -167,7 +200,7 @@ is suggested) that Approuter is contained in the directory ~/approuter.
 * repository url : a valid git url that contains the application source
 * nginx port : this is the port on which nginx will be listening for inbound requests.
 * worker count : this is the number of processes that Approuter will start to handle requests.  These will become upstream entries that NGINX will be proxying to.
-
+* branch: a specific branch to use when deploying the managed application.  If not specified the repository default branch will be used.
 
 <!-- -->
 
