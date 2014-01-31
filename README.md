@@ -177,7 +177,7 @@ is suggested) that Approuter is contained in the directory ~/approuter.
   * cache2h
   * cache4h
   * cache365d
-  
+
   These path prefixes can simply be used at the head of your existing paths to
   allow for caching.
 
@@ -188,7 +188,7 @@ is suggested) that Approuter is contained in the directory ~/approuter.
   cached:
 
          http://approuter.host.example/cache1h/my/app/index.html
-  
+
   When requesting a chaced version of an existing endpoing, you will also
   recieve an X-Cache-Status header in the response with a value of HIT or
   MISS according to the use of the cache in servicing the request.
