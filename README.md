@@ -188,8 +188,8 @@ is suggested) that Approuter is contained in the directory ~/approuter.
   cached:
 
          http://approuter.host.example/cache1h/my/app/index.html
-
-  When requesting a chaced version of an existing endpoing, you will also
+  
+  When requesting a cached version of an existing endpoint, you will also
   recieve an X-Cache-Status header in the response with a value of HIT or
   MISS according to the use of the cache in servicing the request.
 
