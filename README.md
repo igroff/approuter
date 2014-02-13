@@ -76,7 +76,7 @@ things like the crontab (in that it will remove the whole thing on shutdown).
 - Clone the repo into a directory of your choice:
 
         $ cd ~
-        $ git clone https://github.com/intimonkey/approuter.git
+        $ git clone https://github.com/igroff/approuter.git
 - Build Approuter
 
         $ cd ~/approuter/
@@ -221,6 +221,34 @@ stop and restart to take advantage of any changes.  The majority of the logic be
 
 - Will not work on Windows.
 - Known to work at all on Ubuntu 11.10, 12.04 LTS, OS X 10.8.5
+
+### Setting up Node with Approuter
+
+Often NVM is used in conjunction with approuter, and setting it up is
+easy!
+
+- Install NVM requirements 
+ 
+```
+    sudo apt-get install build-essential libssl-dev curl git-core
+```
+- Clone NVM
+
+```
+	git clone git://github.com/creationix/nvm.git ~/.nvm
+```
+- Setup shell initialization
+
+```
+	echo ". ~/.nvm/nvm.sh" >> .bashrc
+	source .bashrc
+```	
+- Setup NVM with node (in this case 0.10.23)
+
+```
+	nvm install 0.10.23 
+	nvm alias default 0.10.23
+```
 
 ### None of this is possible without
 - [perp](http://b0llix.net/perp/)
