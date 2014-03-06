@@ -11,7 +11,7 @@ ln -sf ${NGINX_CONF_FILE} ${NGINX_CONF_LINK}
 # 'roll' from the old instance to the new
 if [ -f "${NGINX_PIDFILE}" ]; then
   log "switching config for NGINX instance with pid `cat ${NGINX_PIDFILE}`"
-  kill -s HUP `cat ${NGINX_PIDFILE}`
+  kill -s HUP `cat ${NGINX_PIDFILE}` || warn 'had a problem killing old nginx, could have just been a stale pidfile will continue... but you may have to work this out'
 else
   warn "NO NGINX pidfile at ${NGINX_PIDFILE}, NO config switch done, this is expected on 'start'" 
 fi
