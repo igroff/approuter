@@ -173,9 +173,14 @@ is suggested) that Approuter is contained in the directory ~/approuter.
   with cacheNU, where N is a numeric value and U is the units. Currently the
   available cache prefixes are as follows:
 
+  * cache1m
+  * cache2m
+  * cache10m
   * cache1h
   * cache2h
   * cache4h
+  * cache1d
+  * cache7d
   * cache365d
 
   These path prefixes can simply be used at the head of your existing paths to
