@@ -86,7 +86,7 @@ things like the crontab (in that it will remove the whole thing on shutdown).
         $ source ./environment
 - Start your app
 
-        $ start_approuter https://github.com/intimonkey/approuter-test.git 8080 2
+        $ start_approuter https://github.com/igroff/approuter-test.git 8080 2
 
 - Check to see if it's running.  Once start of your app is done you should be able to 
 
