@@ -1,5 +1,5 @@
 SHELL=/usr/bin/env bash
-.PHONY: clean base remanaged
+.PHONY: clean base remanaged logrotate
 
 BUILD_ROOT=$(CURDIR)/tmp
 PACKAGE_DIR=$(CURDIR)/packages
@@ -10,6 +10,8 @@ PERPD_ROOT=${INSTALL_LOCATION}/usr/sbin
 PERPD_EXECUTABLE=${INSTALL_LOCATION}/usr/sbin/perpd
 OPEN_SSL= ${INSTALL_LOCATION}/usr/local/ssl/bin/openssl
 OPEN_SSL_SOURCE= ${BUILD_ROOT}/openssl-1.0.1g 
+POPT_SOURCE=${BUILD_ROOT}/popt-1.16
+POPT=${POPT_SOURCE}/popt.o
 LUAJIT=${INSTALL_LOCATION}/bin/luajit
 NGINX=${INSTALL_LOCATION}/sbin/nginx
 PCRE_SOURCE=${BUILD_ROOT}/pcre-8.32
@@ -50,10 +52,16 @@ ${PERPD_EXECUTABLE}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 ${INSTALL_LOCATION}:
 	mkdir -p ${INSTALL_LOCATION}
 
-${LOGROTATE}:
-	cd tmp/logrotate-3.8.3 && make && make install -e PREFIX=${INSTALL_LOCATION} -e INSTALL=install
+${POPT}: ${BUILD_ROOT}
+	cd ${POPT_SOURCE} && ./configure && make
+
+${LOGROTATE}: ${BUILD_ROOT} ${POPT}
+	cd tmp/logrotate-3.8.3 && make -e EXTRA_CFLAGS="-I${POPT_SOURCE}" -e EXTRA_LDFLAGS="-L${POPT_SOURCE}/.libs" && make install -e PREFIX=${INSTALL_LOCATION} -e INSTALL=install install
 	([ ! -f "${LOGROTATE}" ] && ln -s ${LOGROTATE_ALT_LOC} ${LOGROTATE} ) || true
 	([ ! -f "${LOGROTATE_ALT_LOC}" ] && ln -s ${LOGROTATE} ${LOGROTATE_ALT_LOC} ) || true
+
+logrotate: ${LOGROTATE}
+	echo "building log rotate"
 
 ${BUILD_ROOT}:
 	mkdir -p ${BUILD_ROOT}
