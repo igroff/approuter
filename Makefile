@@ -8,8 +8,8 @@ INSTALL_LOCATION=$(CURDIR)/build_output
 INSTALL_BIN= ${INSTALL_LOCATION}/bin
 PERPD_ROOT=${INSTALL_LOCATION}/usr/sbin
 PERPD_EXECUTABLE=${INSTALL_LOCATION}/usr/sbin/perpd
-OPEN_SSL= ${INSTALL_LOCATION}/usr/local/ssl/bin/openssl
-OPEN_SSL_SOURCE= ${BUILD_ROOT}/openssl-1.0.1g 
+OPEN_SSL=${INSTALL_LOCATION}/bin/openssl
+OPEN_SSL_SOURCE=${BUILD_ROOT}/openssl-1.0.1g 
 POPT_SOURCE=${BUILD_ROOT}/popt-1.16
 POPT=${POPT_SOURCE}/popt.o
 LUAJIT=${INSTALL_LOCATION}/bin/luajit
@@ -25,21 +25,25 @@ LOGROTATE=${INSTALL_LOCATION}/usr/sbin/logrotate
 LOGROTATE_ALT_LOC=${INSTALL_LOCATION}/sbin/logrotate
 .EXPORT_ALL_VARIABLES:
 
-${OPEN_SSL}: ${NGINX} ${LUA} ${PERPD_EXECUTABLE} ${LOGROTATE} prereqs
+${NGINX}: ${LUAJIT} ${INSTALL_LOCATION} ${BUILD_ROOT} ${PERPD_EXECUTABLE} ${OPEN_SSL} prereqs
+	cd ${BUILD_ROOT}/nginx/ && export LUAJIT_LIB=${LUAJIT_LIB} && \
+	  ./configure  --with-mail \
+		--with-mail_ssl_module \
+	  --with-http_ssl_module \
+		--with-openssl=${OPEN_SSL_SOURCE} \
+	 	--prefix="${INSTALL_LOCATION}" \
+		--add-module="${BUILD_ROOT}/ngx_devel_kit-0.2.17rc2" \
+		--add-module="${BUILD_ROOT}/lua-nginx-module" \
+		--with-pcre="${BUILD_ROOT}/pcre-8.32"
+	cd ${BUILD_ROOT}/nginx/ && make install
+
+${OPEN_SSL}: ${LUA} ${PERPD_EXECUTABLE} ${LOGROTATE}
 	cd ${OPEN_SSL_SOURCE} && ./config --prefix=${INSTALL_LOCATION}
 	cd ${OPEN_SSL_SOURCE} && make install 
 
 ${LUA}: ${LUAJIT}
 	cd ${INSTALL_BIN} && ln -s luajit lua
 
-${NGINX}: ${LUAJIT} ${INSTALL_LOCATION} ${BUILD_ROOT} ${PERPD_EXECUTABLE}
-	cd ${BUILD_ROOT}/nginx/ && export LUAJIT_LIB=${LUAJIT_LIB} && \
-	  ./configure  --with-mail --with-mail_ssl_module --with-http_ssl_module \
-	 	--prefix=${INSTALL_LOCATION} \
-		--add-module=${BUILD_ROOT}/ngx_devel_kit-0.2.17rc2 \
-		--add-module=${BUILD_ROOT}/lua-nginx-module \
-		--with-pcre=${BUILD_ROOT}/pcre-8.32
-	cd ${BUILD_ROOT}/nginx/ && make install
 
 ${LUAJIT}: ${INSTALL_LOCATION} ${BUILD_ROOT}
 	cd ${BUILD_ROOT}/LuaJIT-2.0.0 && make install -e PREFIX=${INSTALL_LOCATION}
@@ -65,7 +69,7 @@ ${BUILD_ROOT}:
 	cd ${PACKAGE_DIR} && for file in *.tar.gz; do tar xf $${file} -C ${BUILD_ROOT}; done
 
 prereqs: 
-	./bin/install_prereqs
+	sudo ./bin/install_prereqs
 
 remanaged:
 	@-rm -rf ./managed
