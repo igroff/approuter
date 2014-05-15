@@ -1,5 +1,5 @@
 SHELL=/usr/bin/env bash
-.PHONY: clean base remanaged logrotate
+.PHONY: clean base remanaged prereqs
 
 BUILD_ROOT=$(CURDIR)/tmp
 PACKAGE_DIR=$(CURDIR)/packages
@@ -25,7 +25,7 @@ LOGROTATE=${INSTALL_LOCATION}/usr/sbin/logrotate
 LOGROTATE_ALT_LOC=${INSTALL_LOCATION}/sbin/logrotate
 .EXPORT_ALL_VARIABLES:
 
-${OPEN_SSL}: ${NGINX} ${LUA} ${PERPD_EXECUTABLE} ${LOGROTATE}
+${OPEN_SSL}: ${NGINX} ${LUA} ${PERPD_EXECUTABLE} ${LOGROTATE} prereqs
 	cd ${OPEN_SSL_SOURCE} && ./config --prefix=${INSTALL_LOCATION}
 	cd ${OPEN_SSL_SOURCE} && make install 
 
@@ -60,12 +60,12 @@ ${LOGROTATE}: ${BUILD_ROOT} ${POPT}
 	([ ! -f "${LOGROTATE}" ] && ln -s ${LOGROTATE_ALT_LOC} ${LOGROTATE} ) || true
 	([ ! -f "${LOGROTATE_ALT_LOC}" ] && ln -s ${LOGROTATE} ${LOGROTATE_ALT_LOC} ) || true
 
-logrotate: ${LOGROTATE}
-	echo "building log rotate"
-
 ${BUILD_ROOT}:
 	mkdir -p ${BUILD_ROOT}
 	cd ${PACKAGE_DIR} && for file in *.tar.gz; do tar xf $${file} -C ${BUILD_ROOT}; done
+
+prereqs: 
+	./bin/install_prereqs
 
 remanaged:
 	@-rm -rf ./managed

@@ -1,0 +1,38 @@
+#! /usr/bin/env bash
+# vim: ft=sh
+
+which yum > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "found yum, using as installer"
+    function install_package
+    {
+        echo "installing $1"
+        yum install -y "$1"
+    }
+
+    function install_group
+    {
+        echo "installing group $1"
+        yum groupinstall -y "$1"
+    }
+fi
+
+which apt-get > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "found apt-get, using as installer"
+    function install_package
+    {
+        echo "installing $1"
+        apt-get install -y $1
+    }
+
+    function install_group
+    {
+      echo "no install_group of $1 on this platform"
+    }
+fi
+
+which telnet > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+  install_package telnet
+fi
