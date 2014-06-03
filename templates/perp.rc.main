@@ -13,7 +13,8 @@ if [ $1 == "start" ]; then
   popd >> /dev/null
   # schedule an update of our monit config, since this will change our
   # pid
-  echo "{{approuter_bin_dir}}/gen_monit_config 2>&1 | logger -t ar-pid-update" | at now + 1 minute
+  # horrible dos here, commenting out for now
+  # echo "{{approuter_bin_dir}}/gen_monit_config 2>&1 | logger -t ar-pid-update" | at now + 1 minute
   exec {{start_cmd}}
 else
   echo "perp.rc.main $@"
