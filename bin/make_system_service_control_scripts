@@ -1,0 +1,29 @@
+#! /usr/bin/env bash
+set -e
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+
+function make_service_entry_for_exe(){
+  SERVICE_NAME=$1
+  SERVICE_EXE=$2
+  mkdir -p ${PERP_BASE}/${SERVICE_NAME}
+  cat ${TEMPLATE_DIR}/perp.rc.main | \
+    sed -e "s[{{start_cmd}}[${SERVICE_EXE}[g" |\
+    sed -e "s[{{env_settings_file}}[[g" |\
+    sed -e "s[{{change_to_dir}}[${MY_DIR}[g" \
+    > ${PERP_BASE}/${SERVICE_NAME}/rc.main
+  if [ -n "${USE_SYSLOG}" ]; then
+    cp ${TEMPLATE_DIR}/perp.rc.syslog ${PERP_BASE}/${SERVICE_NAME}/rc.log
+  else
+    cat ${TEMPLATE_DIR}/perp.rc.log | \
+      sed -e "s[{{log_dir}}[${LOG_DIR}[g"  > ${PERP_BASE}/${SERVICE_NAME}/rc.log
+  fi
+  chmod +x ${PERP_BASE}/${SERVICE_NAME}/rc.*
+  chmod +t ${PERP_BASE}/${SERVICE_NAME}
+}
+
+make_service_entry_for_exe "${INSTANCE_UPDATE_SERVICE_NAME}" "${MY_DIR}/periodic_instance_update" 
+make_service_entry_for_exe "monit_config_update" "${MY_DIR}/periodic_monit_config_update" 
