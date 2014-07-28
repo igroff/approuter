@@ -79,7 +79,7 @@ function generate_for_file(){
   fi
   #   </setup logger>
 
-  INVOCATION="\"${SCRIPT_PATH}\"${LOGGER}"
+  INVOCATION="flock -n \"/tmp/${SCRIPT_FILE}.shat.lock\" -c \"${SCRIPT_PATH}\"${LOGGER}"
 
   echo "${CRON_EXP} ${INVOCATION}"
 }
