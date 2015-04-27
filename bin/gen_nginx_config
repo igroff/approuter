@@ -25,6 +25,7 @@ if [ -e "${INSTANCE_GROUP_PATH}/${INSTANCE_OVERRIDE_DIR_NAME}/nginx.conf" ]; the
   NGINX_CONF_TEMPLATE="${INSTANCE_GROUP_PATH}/${INSTANCE_OVERRIDE_DIR_NAME}/nginx.conf"
 fi
 
+cp ${TEMPLATE_DIR}/nginx_locations.conf ${NGINX_CONF_ROOT}
 cat ${NGINX_CONF_TEMPLATE} | \
   sed -e s[{{conf_dir}}[${NGINX_CONF_ROOT}[g | \
   sed -e s[{{log_dir}}[${LOG_DIR}[g  | \
