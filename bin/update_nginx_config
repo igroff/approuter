@@ -1,0 +1,9 @@
+#! /usr/bin/env bash
+MY_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -z "${ENVIRONMENT_SOURCED}" ]; then
+  source ${MY_DIR}/environment
+fi
+
+ACTIVE_INSTANCE=$(list_active_instance_names | head -n 1)
+ACTIVE_INSTANCE_PATH=${INSTANCE_GROUP_ROOT}/${ACTIVE_INSTANCE}
+switch_nginx_config $(gen_nginx_config ${ACTIVE_INSTANCE_PATH})
